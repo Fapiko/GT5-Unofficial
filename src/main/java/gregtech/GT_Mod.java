@@ -25,10 +25,7 @@ import gregtech.loaders.load.GT_CoverBehaviorLoader;
 import gregtech.loaders.load.GT_FuelLoader;
 import gregtech.loaders.load.GT_ItemIterator;
 import gregtech.loaders.load.GT_SonictronLoader;
-import gregtech.loaders.misc.GT_Achievements;
-import gregtech.loaders.misc.GT_Bees;
-import gregtech.loaders.misc.GT_CoverLoader;
-import gregtech.loaders.misc.OreProcessingConfiguration;
+import gregtech.loaders.misc.*;
 import gregtech.loaders.postload.*;
 import gregtech.loaders.preload.*;
 import ic2.api.recipe.IRecipeInput;
@@ -391,7 +388,8 @@ public class GT_Mod
         }
         
         new GT_Bees();
-        
+        new GT_Trees();
+
         gregtechproxy.onLoad();
         if (gregtechproxy.mSortToTheEnd) {
             new GT_ItemIterator().run();
