@@ -9,7 +9,10 @@ import gregtech.api.interfaces.tileentity.IGregTechTileEntity;
 import gregtech.api.interfaces.tileentity.IPipeRenderedTileEntity;
 import gregtech.api.net.GT_Packet_TileEntity;
 import gregtech.api.objects.GT_ItemStack;
+import gregtech.api.objects.GT_RenderedTexture;
 import gregtech.api.util.*;
+import gregtech.common.covers.GT_Cover_SolarPanel;
+import gregtech.common.items.GT_MetaGenerated_Item_01;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
@@ -437,7 +440,16 @@ public class BaseMetaPipeEntity extends BaseTileEntity implements IGregTechTileE
     }
 
     public ITexture getCoverTexture(byte aSide) {
-        return GregTech_API.sCovers.get(new GT_ItemStack(getCoverIDAtSide(aSide)));
+        int coverID=getCoverIDAtSide(aSide);
+        for(int i: GT_MetaGenerated_Item_01.solarPleb){
+            if(i==coverID){
+                short dirt=(short)(255-(getCoverDataAtSide(aSide)>>2));
+                GT_RenderedTexture tx=(GT_RenderedTexture) (GregTech_API.sCovers.get(new GT_ItemStack(coverID)));
+                tx.mRGBa=new short[]{dirt,dirt,dirt,255};
+                return tx;
+            }
+        }
+        return GregTech_API.sCovers.get(new GT_ItemStack(coverID));
     }
 
     @Override

@@ -33,6 +33,7 @@ public class GT_MetaGenerated_Item_01 extends GT_MetaGenerated_Item_X32 {
     private final String mToolTipPurify = GT_LanguageManager.addStringLocalization("metaitem.01.tooltip.purify", "Throw into Cauldron to get clean Dust");
     private final static String aTextArrow = "  A";private final static String aTextStick = " S ";private final static String aTextFeather = "F  ";
     private final static String aTextEmptyRow = "   "; private final static String aTextShape = " P ";
+    public static int[] solarPleb;
 
     public GT_MetaGenerated_Item_01() {
         super("metaitem.01", new OrePrefixes[]{OrePrefixes.dustTiny, OrePrefixes.dustSmall, OrePrefixes.dust, OrePrefixes.dustImpure, OrePrefixes.dustPure, OrePrefixes.crushed, OrePrefixes.crushedPurified, OrePrefixes.crushedCentrifuged, OrePrefixes.gem, OrePrefixes.nugget, null, OrePrefixes.ingot, OrePrefixes.ingotHot, OrePrefixes.ingotDouble, OrePrefixes.ingotTriple, OrePrefixes.ingotQuadruple, OrePrefixes.ingotQuintuple, OrePrefixes.plate, OrePrefixes.plateDouble, OrePrefixes.plateTriple, OrePrefixes.plateQuadruple, OrePrefixes.plateQuintuple, OrePrefixes.plateDense, OrePrefixes.stick, OrePrefixes.lens, OrePrefixes.round, OrePrefixes.bolt, OrePrefixes.screw, OrePrefixes.ring, OrePrefixes.foil, OrePrefixes.cell, OrePrefixes.cellPlasma});
@@ -768,6 +769,19 @@ public class GT_MetaGenerated_Item_01 extends GT_MetaGenerated_Item_X32 {
         GregTech_API.registerCover(ItemList.Cover_SolarPanel_LuV.get(1L, new Object[0]), new GT_RenderedTexture(Textures.BlockIcons.SOLARPANEL_LuV), new GT_Cover_SolarPanel(32768));
         GregTech_API.registerCover(ItemList.Cover_SolarPanel_ZPM.get(1L, new Object[0]), new GT_RenderedTexture(Textures.BlockIcons.SOLARPANEL_ZPM), new GT_Cover_SolarPanel(131072));
         GregTech_API.registerCover(ItemList.Cover_SolarPanel_UV.get(1L, new Object[0]), new GT_RenderedTexture(Textures.BlockIcons.SOLARPANEL_UV), new GT_Cover_SolarPanel(524288));
+
+        solarPleb=new int[]{
+                GT_Utility.stackToInt(ItemList.Cover_SolarPanel.get(1L)),
+                GT_Utility.stackToInt(ItemList.Cover_SolarPanel_8V.get(1L)),
+                GT_Utility.stackToInt(ItemList.Cover_SolarPanel_LV.get(1L)),
+                GT_Utility.stackToInt(ItemList.Cover_SolarPanel_MV.get(1L)),
+                GT_Utility.stackToInt(ItemList.Cover_SolarPanel_HV.get(1L)),
+                GT_Utility.stackToInt(ItemList.Cover_SolarPanel_EV.get(1L)),
+                GT_Utility.stackToInt(ItemList.Cover_SolarPanel_IV.get(1L)),
+                GT_Utility.stackToInt(ItemList.Cover_SolarPanel_LuV.get(1L)),
+                GT_Utility.stackToInt(ItemList.Cover_SolarPanel_ZPM.get(1L)),
+                GT_Utility.stackToInt(ItemList.Cover_SolarPanel_UV.get(1L)),
+        };
 
         ItemList.Tool_Sonictron.set(addItem(tLastID = 760, "Sonictron", "Bring your Music with you", new Object[]{Behaviour_Sonictron.INSTANCE, new TC_Aspects.TC_AspectStack(TC_Aspects.SENSUS, 4L)}));
         ItemList.Tool_Cheat.set(addItem(tLastID = 761, "Debug Scanner", "Also an Infinite Energy Source", new Object[]{Behaviour_Scanner.INSTANCE, new TC_Aspects.TC_AspectStack(TC_Aspects.NEBRISUM, 64L)}));
