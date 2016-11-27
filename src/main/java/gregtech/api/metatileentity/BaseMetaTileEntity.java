@@ -692,8 +692,7 @@ public class BaseMetaTileEntity extends BaseTileEntity implements IGregTechTileE
             if(i==coverID){
                 short dirt=(short)(255-(getCoverDataAtSide(aSide)>>2));
                 GT_RenderedTexture tx=(GT_RenderedTexture) (GregTech_API.sCovers.get(new GT_ItemStack(coverID)));
-                tx.mRGBa=new short[]{dirt,dirt,dirt,255};
-                return tx;
+                return new GT_RenderedTexture(tx.getIconContainer(),new short[]{dirt,dirt,dirt,255});
             }
         }
         return GregTech_API.sCovers.get(new GT_ItemStack(coverID));
