@@ -197,7 +197,7 @@ public abstract class GT_MetaTileEntity_Buffer extends GT_MetaTileEntity_TieredM
 
     @Override
     public void setItemNBT(NBTTagCompound aNBT) {
-        super.setItemNBT(aNBT);
+        //super.setItemNBT(aNBT);
         if (mTargetStackSize > 0) aNBT.setInteger("mTargetStackSize", mTargetStackSize);
     }
 

@@ -9,6 +9,7 @@ import gregtech.api.objects.GT_RenderedTexture;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraftforge.fluids.FluidStack;
 
 public class GT_MetaTileEntity_QuantumTank
         extends GT_MetaTileEntity_BasicTank {
@@ -105,7 +106,7 @@ public class GT_MetaTileEntity_QuantumTank
                     EnumChatFormatting.BLUE + "Quantum Tank"+ EnumChatFormatting.RESET,
                     "Stored Fluid:",
                     EnumChatFormatting.GOLD + "No Fluid"+ EnumChatFormatting.RESET,
-                    EnumChatFormatting.GREEN + Integer.toString(0) + " L"+ EnumChatFormatting.RESET+" "+
+                    EnumChatFormatting.GREEN + "0 L"+ EnumChatFormatting.RESET+" /"+
                     EnumChatFormatting.YELLOW + Integer.toString(getCapacity()) + " L"+ EnumChatFormatting.RESET
             };
         }
@@ -113,7 +114,7 @@ public class GT_MetaTileEntity_QuantumTank
                 EnumChatFormatting.BLUE + "Quantum Tank"+ EnumChatFormatting.RESET,
                 "Stored Fluid:",
                 EnumChatFormatting.GOLD + mFluid.getLocalizedName()+ EnumChatFormatting.RESET,
-                EnumChatFormatting.GREEN + Integer.toString(mFluid.amount) + " L"+ EnumChatFormatting.RESET+" "+
+                EnumChatFormatting.GREEN + Integer.toString(mFluid.amount) + " L"+ EnumChatFormatting.RESET+" /"+
                 EnumChatFormatting.YELLOW+ Integer.toString(getCapacity()) + " L"+ EnumChatFormatting.RESET
         };
     }
@@ -138,4 +139,26 @@ public class GT_MetaTileEntity_QuantumTank
         return 100;
     }
 
+    @Override
+    public void setItemNBT(NBTTagCompound aNBT) {
+        saveNBTData(aNBT);
+    }
+
+    @Override
+    public void initDefaultModes(NBTTagCompound aNBT) {
+        loadNBTData(aNBT);
+    }
+
+    @Override
+    public String[] getDescription() {
+        return new String[]{
+                mDescription,
+                mFluid==null?"Empty":"Contains "+mFluid.amount+"L of "+mFluid.getLocalizedName()
+        };
+    }
+
+    @Override
+    public boolean isDigitalChest() {
+        return false;
+    }
 }

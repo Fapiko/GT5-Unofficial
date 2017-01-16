@@ -13,6 +13,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumChatFormatting;
 
 public class GT_MetaTileEntity_QuantumChest extends GT_MetaTileEntity_TieredMachineBlock {
@@ -185,7 +186,7 @@ public class GT_MetaTileEntity_QuantumChest extends GT_MetaTileEntity_TieredMach
                     EnumChatFormatting.BLUE + "Quantum Chest"+ EnumChatFormatting.RESET,
                     "Stored Items:",
                     EnumChatFormatting.GOLD+ "No Items"+ EnumChatFormatting.RESET,
-                    EnumChatFormatting.GREEN + "0" + EnumChatFormatting.RESET+" "+
+                    EnumChatFormatting.GREEN + "0" + EnumChatFormatting.RESET+" /"+
                     EnumChatFormatting.YELLOW + Integer.toString(getMaxItemCount())+ EnumChatFormatting.RESET
             };
         }
@@ -193,7 +194,7 @@ public class GT_MetaTileEntity_QuantumChest extends GT_MetaTileEntity_TieredMach
                 EnumChatFormatting.BLUE + "Quantum Chest"+ EnumChatFormatting.RESET,
                 "Stored Items:",
                 EnumChatFormatting.GOLD + mItemStack.getDisplayName() + EnumChatFormatting.RESET,
-                EnumChatFormatting.GREEN + Integer.toString(mItemCount) + EnumChatFormatting.RESET+" "+
+                EnumChatFormatting.GREEN + Integer.toString(mItemCount) + EnumChatFormatting.RESET+" /"+
                 EnumChatFormatting.YELLOW + Integer.toString(getMaxItemCount())+ EnumChatFormatting.RESET
         };
     }
@@ -229,5 +230,39 @@ public class GT_MetaTileEntity_QuantumChest extends GT_MetaTileEntity_TieredMach
     @Override
     public ITexture[][][] getTextureSet(ITexture[] aTextures) {
         return new ITexture[0][0][0];
+    }
+
+    @Override
+    public void setItemNBT(NBTTagCompound aNBT) {
+        saveNBTData(aNBT);
+        NBTTagList tItemList = new NBTTagList();
+        for (int i = 0; i < getRealInventory().length; i++) {
+            ItemStack tStack = getRealInventory()[i];
+            if (tStack != null) {
+                NBTTagCompound tTag = new NBTTagCompound();
+                tTag.setInteger("IntSlot", i);
+                tStack.writeToNBT(tTag);
+                tItemList.appendTag(tTag);
+            }
+        }
+        aNBT.setTag("Inventory", tItemList);
+    }
+
+    @Override
+    public void initDefaultModes(NBTTagCompound aNBT) {
+        loadNBTData(aNBT);
+    }
+
+    @Override
+    public String[] getDescription() {
+        return new String[]{
+                mDescription,
+                mItemStack==null || mItemCount<=0?"Empty":"Contains "+mItemCount+" of "+mItemStack.getItem().getUnlocalizedName()
+        };
+    }
+
+    @Override
+    public boolean isDigitalChest() {
+        return true;
     }
 }
