@@ -92,7 +92,7 @@ public abstract class GT_MetaTileEntity_LargeTurbine extends GT_MetaTileEntity_M
             if ((tTileEntity != null) && (tTileEntity.getMetaTileEntity() != null)) {
                 if ((tTileEntity.getMetaTileEntity() instanceof GT_MetaTileEntity_Hatch_Dynamo)) {
                     this.mDynamoHatches.add((GT_MetaTileEntity_Hatch_Dynamo) tTileEntity.getMetaTileEntity());
-                    ((GT_MetaTileEntity_Hatch) tTileEntity.getMetaTileEntity()).mMachineBlock = getCasingTextureIndex();
+                    ((GT_MetaTileEntity_Hatch) tTileEntity.getMetaTileEntity()).updateTexture(getCasingTextureIndex());
                 } else {
                     return false;
                 }
@@ -152,7 +152,6 @@ public abstract class GT_MetaTileEntity_LargeTurbine extends GT_MetaTileEntity_M
         }
 
         int newPower = fluidIntoPower(tFluids, optFlow, baseEff);  // How much the turbine should be producing with this flow
-
         int difference = newPower - this.mEUt; // difference between current output and new output
 
         // Magic numbers: can always change by at least 10 eu/t, but otherwise by at most 1 percent of the difference in power level (per tick)
@@ -198,12 +197,6 @@ public abstract class GT_MetaTileEntity_LargeTurbine extends GT_MetaTileEntity_M
         }
         return 0;
     }
-
-    @Override
-    public int getAmountOfOutputs() {
-        return 0;
-    }
-
     @Override
     public boolean explodesOnComponentBreak(ItemStack aStack) {
         return true;

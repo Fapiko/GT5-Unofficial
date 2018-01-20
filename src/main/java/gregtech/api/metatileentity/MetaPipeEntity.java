@@ -2,15 +2,14 @@ package gregtech.api.metatileentity;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import gregtech.GT_Mod;
 import gregtech.api.GregTech_API;
+import gregtech.api.interfaces.metatileentity.IConnectable;
 import gregtech.api.interfaces.metatileentity.IMetaTileEntity;
 import gregtech.api.interfaces.tileentity.IGregTechTileEntity;
 import gregtech.api.objects.GT_ItemStack;
 import gregtech.api.util.GT_Config;
 import gregtech.api.util.GT_LanguageManager;
 import gregtech.api.util.GT_Utility;
-import gregtech.common.GT_Pollution;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -22,7 +21,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -48,7 +46,7 @@ import static gregtech.api.enums.GT_Values.V;
  * Call the Constructor like the following example inside the Load Phase, to register it.
  * "new GT_MetaTileEntity_E_Furnace(54, "GT_E_Furnace", "Automatic E-Furnace");"
  */
-public abstract class MetaPipeEntity implements IMetaTileEntity {
+public abstract class MetaPipeEntity implements IMetaTileEntity, IConnectable {
     /**
      * The Inventory of the MetaTileEntity. Amount of Slots can be larger than 256. HAYO!
      */
@@ -80,6 +78,10 @@ public abstract class MetaPipeEntity implements IMetaTileEntity {
      * }
      */
     public MetaPipeEntity(int aID, String aBasicName, String aRegionalName, int aInvSlotCount) {
+    	this(aID, aBasicName, aRegionalName, aInvSlotCount, true);
+    }
+
+    public MetaPipeEntity(int aID, String aBasicName, String aRegionalName, int aInvSlotCount, boolean aAddInfo) {
         if (GregTech_API.sPostloadStarted || !GregTech_API.sPreloadStarted)
             throw new IllegalAccessError("This Constructor has to be called in the load Phase");
         if (GregTech_API.METATILEENTITIES[aID] == null) {
@@ -93,10 +95,16 @@ public abstract class MetaPipeEntity implements IMetaTileEntity {
         GT_LanguageManager.addStringLocalization("gt.blockmachines." + mName + ".name", aRegionalName);
         mInventory = new ItemStack[aInvSlotCount];
 
-        if (GT.isClientSide()) {
-            ItemStack tStack = new ItemStack(GregTech_API.sBlockMachines, 1, aID);
-            tStack.getItem().addInformation(tStack, null, new ArrayList<String>(), true);
+        if (aAddInfo && GT.isClientSide()) {
+        	addInfo(aID);
         }
+    }
+
+    protected final void addInfo(int aID) {
+    	if(!GT.isClientSide()) return;
+    	
+        ItemStack tStack = new ItemStack(GregTech_API.sBlockMachines, 1, aID);
+        tStack.getItem().addInformation(tStack, null, new ArrayList<String>(), true);
     }
 
     /**
@@ -166,7 +174,7 @@ public abstract class MetaPipeEntity implements IMetaTileEntity {
         if (aSide < 6 && mBaseMetaTileEntity.getCoverIDAtSide(aSide) > 0) {
             tCovered = true;
         }
-        if((mConnections & (byte)(Math.pow(2, aSide))) != 0){
+        if(isConnectedAtSide(aSide)){
         	tCovered = true;
         }
         //System.out.println("Cover: "+mBaseMetaTileEntity.getCoverIDAtSide(aSide));
@@ -203,6 +211,16 @@ public abstract class MetaPipeEntity implements IMetaTileEntity {
 
     @Override
     public boolean onWrenchRightClick(byte aSide, byte aWrenchingSide, EntityPlayer aPlayer, float aX, float aY, float aZ) {
+        return false;
+    }
+
+    @Override
+    public boolean onWireCutterRightClick(byte aSide, byte aWrenchingSide, EntityPlayer aPlayer, float aX, float aY, float aZ) {
+        return false;
+    }
+
+    @Override
+    public boolean onSolderingToolRightClick(byte aSide, byte aWrenchingSide, EntityPlayer aPlayer, float aX, float aY, float aZ) {
         return false;
     }
 
@@ -308,12 +326,12 @@ public abstract class MetaPipeEntity implements IMetaTileEntity {
 
     @Override
     public boolean isLiquidInput(byte aSide) {
-        return true;
+        return false;
     }
 
     @Override
     public boolean isLiquidOutput(byte aSide) {
-        return true;
+        return false;
     }
 
     /**
@@ -667,8 +685,6 @@ public abstract class MetaPipeEntity implements IMetaTileEntity {
         World tWorld = getBaseMetaTileEntity().getWorld();
         tWorld.setBlock(tX, tY, tZ, Blocks.air);
         if (GregTech_API.sMachineExplosions)
-            if(GT_Mod.gregtechproxy.mPollution)
-                GT_Pollution.addPollution(new ChunkPosition(tX, tY, tZ), 100000);
             tWorld.createExplosion(null, tX + 0.5, tY + 0.5, tZ + 0.5, tStrength, true);
     }
 
@@ -697,4 +713,50 @@ public abstract class MetaPipeEntity implements IMetaTileEntity {
     public void onCreated(ItemStack aStack, World aWorld, EntityPlayer aPlayer) {
         //
     }
+
+    @Override
+    public boolean allowGeneralRedstoneOutput(){
+        return false;
+    }
+
+	@Override
+	public boolean hasAlternativeModeText() {
+		return false;
+	}
+
+	@Override
+	public String getAlternativeModeText() {
+		return "";
+	}
+
+	public String trans(String aKey, String aEnglish){
+    	return GT_LanguageManager.addStringLocalization("Interaction_DESCRIPTION_Index_"+aKey, aEnglish, false);
+    }
+
+	@Override
+	public int connect(byte aSide) {
+		if (aSide >= 6) return 0;
+		mConnections |= (1 << aSide);
+		byte tSide = GT_Utility.getOppositeSide(aSide);
+		IGregTechTileEntity tTileEntity = getBaseMetaTileEntity().getIGregTechTileEntityAtSide(aSide);
+		IMetaTileEntity tPipe = tTileEntity instanceof IGregTechTileEntity ? ((IGregTechTileEntity) tTileEntity).getMetaTileEntity() : null;
+		if (this.getClass().isInstance(tPipe) && !((MetaPipeEntity) tPipe).isConnectedAtSide(tSide))
+			((MetaPipeEntity) tPipe).connect(tSide);
+    	return 1;
+	}
+
+	@Override
+	public void disconnect(byte aSide) {
+		if (aSide >= 6) return;
+		mConnections &= ~(1 << aSide);
+		byte tSide = GT_Utility.getOppositeSide(aSide);
+		IGregTechTileEntity tTileEntity = getBaseMetaTileEntity().getIGregTechTileEntityAtSide(aSide);
+		IMetaTileEntity tPipe = tTileEntity == null ? null : tTileEntity.getMetaTileEntity(); 
+		if (this.getClass().isInstance(tPipe) && ((MetaPipeEntity) tPipe).isConnectedAtSide(tSide))
+			((MetaPipeEntity) tPipe).disconnect(tSide);
+	}
+
+	public boolean isConnectedAtSide(int aSide) {
+		return (mConnections & (1 << aSide)) != 0;
+	}
 }

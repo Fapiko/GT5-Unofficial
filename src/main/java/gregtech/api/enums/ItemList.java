@@ -143,6 +143,14 @@ public enum ItemList implements IItemContainer {
     Shape_Mold_Anvil,
     Shape_Mold_Arrow,
     Shape_Mold_Name,
+    Shape_Mold_Rod,
+    Shape_Mold_Bolt,
+    Shape_Mold_Round,
+    Shape_Mold_Screw,
+    Shape_Mold_Ring,
+    Shape_Mold_Rod_Long,
+    Shape_Mold_Rotor,
+    Shape_Mold_Turbine_Blade,
     Shape_Slicer_Flat,
     Shape_Slicer_Stripes,
     Shape_Extruder_Bottle,
@@ -169,6 +177,9 @@ public enum ItemList implements IItemContainer {
     Shape_Extruder_File,
     Shape_Extruder_Saw,
     Shape_Extruder_Gear,
+    Shape_Extruder_Rotor,
+    Shape_Extruder_Turbine_Blade,
+    Shape_Extruder_Small_Gear,
     Crate_Empty,
     Credit_Copper,
     Credit_Iron,
@@ -327,6 +338,7 @@ public enum ItemList implements IItemContainer {
     Crop_Drop_Grapes,
     Crop_Drop_TeaLeaf,
     Crop_Drop_Cucumber,
+    Crop_Drop_Rape,
     Schematic,
     Schematic_Crafting,
     Schematic_1by1,
@@ -529,30 +541,33 @@ public enum ItemList implements IItemContainer {
     Machine_Bronze_Compressor,
     Machine_Bronze_AlloySmelter,
     Machine_Bronze_BlastFurnace,
+    Machine_Bricked_BlastFurnace,
     Machine_Steel_Boiler_Lava,
     Machine_Steel_Boiler,
-    Machine_Steel_Furnace,
-    Machine_Steel_Macerator,
-    Machine_Steel_Extractor,
-    Machine_Steel_Hammer,
-    Machine_Steel_Compressor,
-    Machine_Steel_AlloySmelter,
+    Machine_HP_Furnace,
+    Machine_HP_Macerator,
+    Machine_HP_Extractor,
+    Machine_HP_Hammer,
+    Machine_HP_Compressor,
+    Machine_HP_AlloySmelter,
 
-    Hull_Bronze, Hull_Steel, Hull_Bronze_Bricks, Hull_Steel_Bricks,
+    Hull_Bronze, Hull_HP, Hull_Bronze_Bricks, Hull_HP_Bricks,
 
     Transformer_LV_ULV, Transformer_MV_LV, Transformer_HV_MV, Transformer_EV_HV, Transformer_IV_EV, Transformer_LuV_IV, Transformer_ZPM_LuV, Transformer_UV_ZPM, Transformer_MAX_UV,
 
     Casing_ULV, Casing_LV, Casing_MV, Casing_HV, Casing_EV, Casing_IV, Casing_LuV, Casing_ZPM, Casing_UV, Casing_MAX, Casing_BronzePlatedBricks, Casing_HeatProof, Casing_Coil_Cupronickel_Deprecated, Casing_Coil_Kanthal_Deprecated, Casing_Coil_Nichrome_Deprecated, Casing_Coil_Superconductor,
-    Casing_SolidSteel, Casing_FrostProof, Casing_Gearbox_Bronze, Casing_Gearbox_Steel, Casing_Gearbox_Titanium, Casing_Gearbox_TungstenSteel, Casing_Processor, Casing_DataDrive, Casing_ContainmentField, Casing_Assembler, Casing_Pump, Casing_Motor, Casing_Pipe_Bronze, Casing_Pipe_Steel, Casing_Pipe_Titanium, Casing_Pipe_TungstenSteel,
-    Casing_Stripes_A, Casing_Stripes_B, Casing_RadioactiveHazard, Casing_BioHazard, Casing_ExplosionHazard, Casing_FireHazard, Casing_AcidHazard, Casing_MagicHazard, Casing_FrostHazard, Casing_NoiseHazard, Casing_Grate, Casing_Vent, Casing_RadiationProof, Casing_Firebox_Bronze, Casing_Firebox_Steel, Casing_Firebox_TungstenSteel,
-    Casing_RobustTungstenSteel, Casing_CleanStainlessSteel, Casing_StableTitanium, Casing_Firebox_Titanium,
+    Casing_SolidSteel, Casing_FrostProof, Casing_Gearbox_Bronze, Casing_Gearbox_Steel, Casing_Gearbox_Titanium, Casing_Gearbox_TungstenSteel, Casing_Processor, Casing_DataDrive, Casing_ContainmentField, Casing_Assembler, Casing_Pump, Casing_Motor, Casing_Pipe_Bronze, Casing_Pipe_Steel, Casing_Pipe_Titanium, Casing_Pipe_TungstenSteel, Casing_Pipe_Polytetrafluoroethylene,
+    Casing_Stripes_A, Casing_Stripes_B, Casing_RadioactiveHazard, Casing_BioHazard, Casing_ExplosionHazard, Casing_FireHazard, Casing_AcidHazard, Casing_MagicHazard, Casing_FrostHazard, Casing_NoiseHazard, Casing_Grate, Casing_Vent, Casing_RadiationProof, Casing_Firebox_Bronze, Casing_Firebox_Steel, Casing_Firebox_TungstenSteel, Casing_Chemically_Inert,
+    Casing_MiningOsmiridium, Casing_RobustTungstenSteel, Casing_CleanStainlessSteel, Casing_StableTitanium, Casing_Firebox_Titanium,
     Hull_ULV, Hull_LV, Hull_MV, Hull_HV, Hull_EV, Hull_IV, Hull_LuV, Hull_ZPM, Hull_UV, Hull_MAX,
+    CompressedFireclay, Firebrick, Casing_Firebricks,
 
     Automation_Filter_ULV, Automation_Filter_LV, Automation_Filter_MV, Automation_Filter_HV, Automation_Filter_EV, Automation_Filter_IV, Automation_Filter_LuV, Automation_Filter_ZPM, Automation_Filter_UV, Automation_Filter_MAX,
     Automation_TypeFilter_ULV, Automation_TypeFilter_LV, Automation_TypeFilter_MV, Automation_TypeFilter_HV, Automation_TypeFilter_EV, Automation_TypeFilter_IV, Automation_TypeFilter_LuV, Automation_TypeFilter_ZPM, Automation_TypeFilter_UV, Automation_TypeFilter_MAX,
     Automation_ChestBuffer_ULV, Automation_ChestBuffer_LV, Automation_ChestBuffer_MV, Automation_ChestBuffer_HV, Automation_ChestBuffer_EV, Automation_ChestBuffer_IV, Automation_ChestBuffer_LuV, Automation_ChestBuffer_ZPM, Automation_ChestBuffer_UV, Automation_ChestBuffer_MAX,
     Automation_SuperBuffer_ULV, Automation_SuperBuffer_LV, Automation_SuperBuffer_MV, Automation_SuperBuffer_HV, Automation_SuperBuffer_EV, Automation_SuperBuffer_IV, Automation_SuperBuffer_LuV, Automation_SuperBuffer_ZPM, Automation_SuperBuffer_UV, Automation_SuperBuffer_MAX,
     Automation_Regulator_ULV, Automation_Regulator_LV, Automation_Regulator_MV, Automation_Regulator_HV, Automation_Regulator_EV, Automation_Regulator_IV, Automation_Regulator_LuV, Automation_Regulator_ZPM, Automation_Regulator_UV, Automation_Regulator_MAX,
+    Automation_ItemDistributor_ULV, Automation_ItemDistributor_LV, Automation_ItemDistributor_MV, Automation_ItemDistributor_HV, Automation_ItemDistributor_EV, Automation_ItemDistributor_IV, Automation_ItemDistributor_LuV, Automation_ItemDistributor_ZPM, Automation_ItemDistributor_UV, Automation_ItemDistributor_MAX,
 
     Hatch_Dynamo_ULV, Hatch_Dynamo_LV, Hatch_Dynamo_MV, Hatch_Dynamo_HV, Hatch_Dynamo_EV, Hatch_Dynamo_IV, Hatch_Dynamo_LuV, Hatch_Dynamo_ZPM, Hatch_Dynamo_UV, Hatch_Dynamo_MAX,
     Hatch_Energy_ULV, Hatch_Energy_LV, Hatch_Energy_MV, Hatch_Energy_HV, Hatch_Energy_EV, Hatch_Energy_IV, Hatch_Energy_LuV, Hatch_Energy_ZPM, Hatch_Energy_UV, Hatch_Energy_MAX,
@@ -561,7 +576,7 @@ public enum ItemList implements IItemContainer {
     Hatch_Output_ULV, Hatch_Output_LV, Hatch_Output_MV, Hatch_Output_HV, Hatch_Output_EV, Hatch_Output_IV, Hatch_Output_LuV, Hatch_Output_ZPM, Hatch_Output_UV, Hatch_Output_MAX,
     Hatch_Output_Bus_ULV, Hatch_Output_Bus_LV, Hatch_Output_Bus_MV, Hatch_Output_Bus_HV, Hatch_Output_Bus_EV, Hatch_Output_Bus_IV, Hatch_Output_Bus_LuV, Hatch_Output_Bus_ZPM, Hatch_Output_Bus_UV, Hatch_Output_Bus_MAX,
     Hatch_Muffler_LV, Hatch_Muffler_MV, Hatch_Muffler_HV, Hatch_Muffler_EV, Hatch_Muffler_IV, Hatch_Muffler_LuV, Hatch_Muffler_ZPM, Hatch_Muffler_UV, Hatch_Muffler_MAX,
-    Hatch_Maintenance,
+    Hatch_Maintenance,  Hatch_DataAccess_EV, Hatch_DataAccess_LuV,
 
     Battery_Buffer_1by1_ULV, Battery_Buffer_1by1_LV, Battery_Buffer_1by1_MV, Battery_Buffer_1by1_HV, Battery_Buffer_1by1_EV, Battery_Buffer_1by1_IV, Battery_Buffer_1by1_LuV, Battery_Buffer_1by1_ZPM, Battery_Buffer_1by1_UV, Battery_Buffer_1by1_MAX,
     Battery_Buffer_2by2_ULV, Battery_Buffer_2by2_LV, Battery_Buffer_2by2_MV, Battery_Buffer_2by2_HV, Battery_Buffer_2by2_EV, Battery_Buffer_2by2_IV, Battery_Buffer_2by2_LuV, Battery_Buffer_2by2_ZPM, Battery_Buffer_2by2_UV, Battery_Buffer_2by2_MAX,
@@ -620,6 +635,8 @@ public enum ItemList implements IItemContainer {
     Machine_LV_Press, Machine_MV_Press, Machine_HV_Press, Machine_EV_Press, Machine_IV_Press,
     Machine_LV_Hammer, Machine_MV_Hammer, Machine_HV_Hammer, Machine_EV_Hammer, Machine_IV_Hammer,
     Machine_LV_FluidHeater, Machine_MV_FluidHeater, Machine_HV_FluidHeater, Machine_EV_FluidHeater, Machine_IV_FluidHeater,
+    Machine_Multi_LargeChemicalReactor,
+    Machine_LV_Miner, Machine_MV_Miner, Machine_HV_Miner,
 
     Neutron_Reflector,
     Reactor_Coolant_He_1, Reactor_Coolant_He_3, Reactor_Coolant_He_6, Reactor_Coolant_NaK_1, Reactor_Coolant_NaK_3, Reactor_Coolant_NaK_6,neutroniumHeatCapacitor,
@@ -631,39 +648,43 @@ public enum ItemList implements IItemContainer {
     MagicEnergyAbsorber_LV, MagicEnergyAbsorber_MV, MagicEnergyAbsorber_HV, MagicEnergyAbsorber_EV,
     Depleted_Thorium_1, Depleted_Thorium_2, Depleted_Thorium_4,
     Processing_Array, Distillation_Tower, Energy_LapotronicOrb2,
-    ZPM3,ZPM2, Quantum_Tank_LV, Quantum_Tank_MV, Quantum_Tank_HV, Quantum_Tank_EV, Quantum_Tank_IV, Quantum_Chest_LV, Quantum_Chest_MV, Quantum_Chest_HV, Quantum_Chest_EV, Quantum_Chest_IV,
+    ZPM3,ZPM2, Energy_Module, Energy_Cluster,
+	Quantum_Tank_LV, Quantum_Tank_MV, Quantum_Tank_HV, Quantum_Tank_EV, Quantum_Tank_IV, Quantum_Chest_LV, Quantum_Chest_MV, Quantum_Chest_HV, Quantum_Chest_EV, Quantum_Chest_IV,
     Super_Tank_LV, Super_Tank_MV, Super_Tank_HV, Super_Tank_EV, Super_Tank_IV, Super_Chest_LV, Super_Chest_MV, Super_Chest_HV, Super_Chest_EV, Super_Chest_IV,
 
     NULL, Cover_RedstoneTransmitterExternal, Cover_RedstoneTransmitterInternal, Cover_RedstoneReceiverExternal, Cover_RedstoneReceiverInternal,
     LargeSteamTurbine, LargeGasTurbine, LargeHPSteamTurbine, LargePlasmaTurbine,
     Ingot_Heavy1, Ingot_Heavy2, Ingot_Heavy3,
-    Pump_LV, Pump_MV, Pump_HV, Pump_EV, Pump_IV,
+    Pump_LV, Pump_MV, Pump_HV, Pump_EV, Pump_IV, Pump_LuV, Pump_ZPM, Pump_UV,
     Teleporter, Cover_NeedsMaintainance, Casing_Turbine, Casing_Turbine1, Casing_Turbine2, Casing_Turbine3, Casing_EngineIntake,
     Casing_Coil_Cupronickel, Casing_Coil_Kanthal, Casing_Coil_Nichrome, Casing_Coil_TungstenSteel, Casing_Coil_HSSG, Casing_Coil_Naquadah, Casing_Coil_NaquadahAlloy,
     Casing_Tank_1, Casing_Tank_2, Casing_Tank_3, Casing_Tank_4, Casing_Tank_5, Casing_Tank_6, Casing_Tank_7, Casing_Tank_8, Casing_Tank_9, Casing_Tank_10, Casing_Tank_11, Casing_Tank_12, Casing_Tank_13, Casing_Tank_14, Casing_Tank_15, Casing_Tank_0,
     MobRep_LV, MobRep_MV, MobRep_HV, MobRep_EV, MobRep_IV, MobRep_LuV, MobRep_ZPM, MobRep_UV, Cover_PlayerDetector, Machine_Multi_HeatExchanger,
     Block_BronzePlate, Block_IridiumTungstensteel, Block_Plascrete, Block_TungstenSteelReinforced,
-    Honeycomb, Charcoal_Pile, Block_BrittleCharcoal, Seismic_Prospector, Seismic_Prospector_Adv, OilDrill, AdvancedMiner2, PyrolyseOven, OilCracker, Crop_Drop_UUMBerry, Crop_Drop_UUABerry, Empty_Board_Basic, Empty_Board_Elite,
+    Honeycomb, Charcoal_Pile, Block_BrittleCharcoal, Seismic_Prospector_LV, Seismic_Prospector_MV, Seismic_Prospector_HV, Seismic_Prospector_Adv_EV, OilDrill1, OilDrill2, OilDrill3, ConcreteBackfiller1, ConcreteBackfiller2, OreDrill1, OreDrill2, OreDrill3, OreDrill4, PyrolyseOven, OilCracker, Crop_Drop_UUMBerry, Crop_Drop_UUABerry, Empty_Board_Basic, Empty_Board_Elite,
     Battery_Charger_4by4_ULV, Battery_Charger_4by4_LV, Battery_Charger_4by4_MV, Battery_Charger_4by4_HV, Battery_Charger_4by4_EV, Battery_Charger_4by4_IV, Battery_Charger_4by4_LuV, Battery_Charger_4by4_ZPM, Battery_Charger_4by4_UV, Battery_Charger_4by4_MAX,
-    MicroTransmitter_HV, MicroTransmitter_EV, MicroTransmitter_IV, MicroTransmitter_LUV, MicroTransmitter_ZPM,
+    MicroTransmitter_HV, MicroTransmitter_EV, MicroTransmitter_IV, MicroTransmitter_LUV, MicroTransmitter_ZPM,  MicroTransmitter_UV,
     Crop_Drop_Bauxite, Crop_Drop_Ilmenite, Crop_Drop_Pitchblende, Crop_Drop_Uraninite, Crop_Drop_Thorium, Crop_Drop_Nickel, Crop_Drop_Zinc, Crop_Drop_Manganese, Crop_Drop_Scheelite, Crop_Drop_Platinum, Crop_Drop_Iridium, Crop_Drop_Osmium, Crop_Drop_Naquadah, Uraniumcell_1, Uraniumcell_2, Uraniumcell_4, Moxcell_1, Moxcell_2, Moxcell_4,
     ModularBasicHelmet, ModularBasicChestplate, ModularBasicLeggings, ModularBasicBoots,
     ModularElectric1Helmet, ModularElectric1Chestplate, ModularElectric1Leggings, ModularElectric1Boots,
     ModularElectric2Helmet, ModularElectric2Chestplate, ModularElectric2Leggings, ModularElectric2Boots, Block_Powderbarrel, GelledToluene,
-    FluidRegulator_LV, FluidRegulator_MV, FluidRegulator_HV, FluidRegulator_EV, FluidRegulator_IV, FluidRegulator_LuV, FluidRegulator_ZPM, FluidRegulator_UV,
-    FluidFilter, CuringOven,
-    Machine_Multi_Assemblyline, Machine_Multi_DieselEngine,
-    QuantumEye, QuantumStar, Gravistar,
-    Block_SSFUEL, Block_MSSFUEL, SFMixture, MSFMixture,
-    Depleted_Naquadah_1, Depleted_Naquadah_2, Depleted_Naquadah_4,
-    NaquadahCell_1, NaquadahCell_2, NaquadahCell_4,
-    Depleted_MNq_1, Depleted_MNq_2, Depleted_MNq_4,
-    MNqCell_1, MNqCell_2, MNqCell_4,
-    Hatch_AutoMaintenance;
-
+    FluidRegulator_LV, FluidRegulator_MV, FluidRegulator_HV, FluidRegulator_EV, FluidRegulator_IV, FluidRegulator_LuV, FluidRegulator_ZPM, FluidRegulator_UV, FluidFilter, CuringOven, Machine_Multi_Assemblyline, Machine_Multi_DieselEngine, QuantumEye, QuantumStar, Gravistar, Block_SSFUEL, Block_MSSFUEL, SFMixture, MSFMixture, Depleted_Naquadah_1, Depleted_Naquadah_2, Depleted_Naquadah_4, NaquadahCell_1, NaquadahCell_2, NaquadahCell_4, Hatch_AutoMaintenance,
+    Machine_Multi_Cleanroom, Circuit_Board_Coated, Circuit_Board_Coated_Basic, Circuit_Board_Phenolic, Circuit_Board_Phenolic_Good, Circuit_Board_Epoxy, Circuit_Board_Epoxy_Advanced, Circuit_Board_Fiberglass, Circuit_Board_Fiberglass_Advanced, Circuit_Board_Multifiberglass_Elite, Circuit_Board_Multifiberglass, Circuit_Board_Wetware, Circuit_Board_Wetware_Extreme, Circuit_Board_Plastic, Circuit_Board_Plastic_Advanced,
+    Circuit_Parts_Resistor, Circuit_Parts_ResistorSMD, Circuit_Parts_Glass_Tube, Circuit_Parts_Vacuum_Tube, Circuit_Parts_Coil, Circuit_Parts_Diode, Circuit_Parts_DiodeSMD, Circuit_Parts_Transistor, Circuit_Parts_TransistorSMD, Circuit_Parts_Capacitor, Circuit_Parts_CapacitorSMD, Circuit_Parts_GlassFiber, Circuit_Parts_PetriDish,
+    Circuit_Silicon_Ingot, Circuit_Silicon_Ingot2, Circuit_Silicon_Ingot3, Circuit_Silicon_Wafer, Circuit_Silicon_Wafer2, Circuit_Silicon_Wafer3, Circuit_Wafer_ILC, Circuit_Chip_ILC, Circuit_Wafer_Ram, Circuit_Chip_Ram,
+    Circuit_Wafer_NAND, Circuit_Chip_NAND, Circuit_Wafer_NOR, Circuit_Chip_NOR, Circuit_Wafer_CPU, Circuit_Chip_CPU, Circuit_Wafer_SoC, Circuit_Chip_SoC, Circuit_Wafer_SoC2, Circuit_Chip_SoC2, Circuit_Wafer_PIC, Circuit_Chip_PIC, 
+    Circuit_Wafer_HPIC, Circuit_Wafer_UHPIC, Circuit_Chip_HPIC, Circuit_Chip_UHPIC, Circuit_Wafer_NanoCPU, Circuit_Chip_NanoCPU, Circuit_Wafer_QuantumCPU, Circuit_Chip_QuantumCPU,
+    Circuit_Chip_CrystalCPU, Circuit_Chip_CrystalSoC, Circuit_Chip_NeuroCPU, Circuit_Chip_Stemcell, Circuit_Parts_RawCrystalParts,
+    Tube_Wires,
+    Circuit_Microprocessor, Circuit_Processor, Circuit_Computer, Circuit_Nanoprocessor, Circuit_Nanocomputer, Circuit_Elitenanocomputer, Circuit_Quantumprocessor, Circuit_Quantumcomputer, Circuit_Masterquantumcomputer,
+    Circuit_Quantummainframe, Circuit_Crystalprocessor, Circuit_Crystalcomputer, Circuit_Ultimatecrystalcomputer, Circuit_Crystalmainframe, Circuit_Neuroprocessor, Circuit_Wetwarecomputer, Circuit_Wetwaresupercomputer, Circuit_Wetwaremainframe, Circuit_Parts_RawCrystalChip,
+    Machine_LV_CircuitAssembler, Machine_MV_CircuitAssembler, Machine_HV_CircuitAssembler, Machine_EV_CircuitAssembler, Machine_IV_CircuitAssembler, Machine_LuV_CircuitAssembler, Machine_ZPM_CircuitAssembler, Machine_UV_CircuitAssembler, Circuit_Integrated_Good, Machine_IV_LightningRod, Machine_HV_LightningRod, Machine_EV_LightningRod,
+   
+   Depleted_MNq_1, Depleted_MNq_2, Depleted_MNq_4,
+    MNqCell_1, MNqCell_2, MNqCell_4,;
     public static final ItemList[]
             DYE_ONLY_ITEMS = {Color_00, Color_01, Color_02, Color_03, Color_04, Color_05, Color_06, Color_07, Color_08, Color_09, Color_10, Color_11, Color_12, Color_13, Color_14, Color_15}, SPRAY_CAN_DYES = {Spray_Color_00, Spray_Color_01, Spray_Color_02, Spray_Color_03, Spray_Color_04, Spray_Color_05, Spray_Color_06, Spray_Color_07, Spray_Color_08, Spray_Color_09, Spray_Color_10, Spray_Color_11, Spray_Color_12, Spray_Color_13, Spray_Color_14, Spray_Color_15}, SPRAY_CAN_DYES_USED = {Spray_Color_Used_00, Spray_Color_Used_01, Spray_Color_Used_02, Spray_Color_Used_03, Spray_Color_Used_04, Spray_Color_Used_05, Spray_Color_Used_06, Spray_Color_Used_07, Spray_Color_Used_08, Spray_Color_Used_09, Spray_Color_Used_10, Spray_Color_Used_11, Spray_Color_Used_12, Spray_Color_Used_13, Spray_Color_Used_14, Spray_Color_Used_15}, TRANSFORMERS = {Transformer_LV_ULV, Transformer_MV_LV, Transformer_HV_MV, Transformer_EV_HV, Transformer_IV_EV, Transformer_LuV_IV, Transformer_ZPM_LuV, Transformer_UV_ZPM, Transformer_MAX_UV}, MACHINE_HULLS = {Hull_ULV, Hull_LV, Hull_MV, Hull_HV, Hull_EV, Hull_IV, Hull_LuV, Hull_ZPM, Hull_UV, Hull_MAX}, HATCHES_DYNAMO = {Hatch_Dynamo_ULV, Hatch_Dynamo_LV, Hatch_Dynamo_MV, Hatch_Dynamo_HV, Hatch_Dynamo_EV, Hatch_Dynamo_IV, Hatch_Dynamo_LuV, Hatch_Dynamo_ZPM, Hatch_Dynamo_UV, Hatch_Dynamo_MAX}, HATCHES_ENERGY = {Hatch_Energy_ULV, Hatch_Energy_LV, Hatch_Energy_MV, Hatch_Energy_HV, Hatch_Energy_EV, Hatch_Energy_IV, Hatch_Energy_LuV, Hatch_Energy_ZPM, Hatch_Energy_UV, Hatch_Energy_MAX}, HATCHES_INPUT = {Hatch_Input_ULV, Hatch_Input_LV, Hatch_Input_MV, Hatch_Input_HV, Hatch_Input_EV, Hatch_Input_IV, Hatch_Input_LuV, Hatch_Input_ZPM, Hatch_Input_UV, Hatch_Input_MAX}, HATCHES_INPUT_BUS = {Hatch_Input_Bus_ULV, Hatch_Input_Bus_LV, Hatch_Input_Bus_MV, Hatch_Input_Bus_HV, Hatch_Input_Bus_EV, Hatch_Input_Bus_IV, Hatch_Input_Bus_LuV, Hatch_Input_Bus_ZPM, Hatch_Input_Bus_UV, Hatch_Input_Bus_MAX}, HATCHES_OUTPUT = {Hatch_Output_ULV, Hatch_Output_LV, Hatch_Output_MV, Hatch_Output_HV, Hatch_Output_EV, Hatch_Output_IV, Hatch_Output_LuV, Hatch_Output_ZPM, Hatch_Output_UV, Hatch_Output_MAX}, HATCHES_OUTPUT_BUS = {Hatch_Output_Bus_ULV, Hatch_Output_Bus_LV, Hatch_Output_Bus_MV, Hatch_Output_Bus_HV, Hatch_Output_Bus_EV, Hatch_Output_Bus_IV, Hatch_Output_Bus_LuV, Hatch_Output_Bus_ZPM, Hatch_Output_Bus_UV, Hatch_Output_Bus_MAX}, HATCHES_MUFFLER = {Hatch_Muffler_LV, Hatch_Muffler_LV, Hatch_Muffler_MV, Hatch_Muffler_HV, Hatch_Muffler_EV, Hatch_Muffler_IV, Hatch_Muffler_LuV, Hatch_Muffler_ZPM, Hatch_Muffler_UV, Hatch_Muffler_MAX};
-    public static Fluid sOilExtraHeavy, sEpichlorhydrin, sDrillingFluid, sNitricAcid, sBlueVitriol, sNickelSulfate, sToluene, sNitrationMixture;
+    public static Fluid sOilExtraHeavy, sEpichlorhydrin, sDrillingFluid, sNitricAcid, sBlueVitriol, sNickelSulfate, sToluene, sNitrationMixture, sRocketFuel, sHydricSulfur, sIndiumConcentrate, sLeadZincSolution, sIron3Chloride, sHydrochloricAcid;
     private ItemStack mStack;
     private boolean mHasNotBeenSet = true;
 
@@ -695,7 +716,7 @@ public enum ItemList implements IItemContainer {
     public Block getBlock() {
         if (mHasNotBeenSet)
             throw new IllegalAccessError("The Enum '" + name() + "' has not been set to an Item at this time!");
-        return GT_Utility.getBlockFromStack(getItem());
+        return GT_Utility.getBlockFromItem(getItem());
     }
 
     @Override

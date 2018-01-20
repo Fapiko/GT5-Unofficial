@@ -12,8 +12,7 @@ import gregtech.api.util.GT_Recipe;
 import gregtech.api.util.GT_Utility;
 import net.minecraft.entity.player.InventoryPlayer;
 
-public class GT_MetaTileEntity_AlloySmelter_Bronze
-        extends GT_MetaTileEntity_BasicMachine_Bronze {
+public class GT_MetaTileEntity_AlloySmelter_Bronze extends GT_MetaTileEntity_BasicMachine_Bronze {
     public GT_MetaTileEntity_AlloySmelter_Bronze(int aID, String aName, String aNameRegional) {
         super(aID, aName, aNameRegional, "Combination Smelter", 2, 1, true);
     }
@@ -22,8 +21,12 @@ public class GT_MetaTileEntity_AlloySmelter_Bronze
         super(aName, aDescription, aTextures, 2, 1, true);
     }
 
+    public GT_MetaTileEntity_AlloySmelter_Bronze(String aName, String[] aDescription, ITexture[][][] aTextures) {
+        super(aName, aDescription, aTextures, 2, 1, true);
+    }
+
     public MetaTileEntity newMetaEntity(IGregTechTileEntity aTileEntity) {
-        return new GT_MetaTileEntity_AlloySmelter_Bronze(this.mName, this.mDescription, this.mTextures);
+        return new GT_MetaTileEntity_AlloySmelter_Bronze(this.mName, this.mDescriptionArray, this.mTextures);
     }
 
     public Object getClientGUI(int aID, InventoryPlayer aPlayerInventory, IGregTechTileEntity aBaseMetaTileEntity) {

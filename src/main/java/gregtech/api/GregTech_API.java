@@ -68,8 +68,9 @@ public class GregTech_API {
     /**
      * A List of all registered MetaTileEntities
      * <p/>
-     * 0 -  1199 are used by GregTech.
-     * 1200 -  2047 are used for GregTech Cables.
+     * 0 	-  749  are used by GregTech.
+     * 750	-  999  are reserved for Alkalus.
+     * 1000 -  2047 are used by GregTech.
      * 2048 -  2559 are reserved for OvermindDL.
      * 2560 -  3071 are reserved for Immibis.
      * 3072 -  3583 are reserved for LinusPhoenix.
@@ -125,7 +126,7 @@ public class GregTech_API {
     /**
      * The List of Tools, which can be used. Accepts regular damageable Items and Electric Items
      */
-    public static final GT_HashSet<GT_ItemStack> sToolList = new GT_HashSet<GT_ItemStack>(), sCrowbarList = new GT_HashSet<GT_ItemStack>(), sScrewdriverList = new GT_HashSet<GT_ItemStack>(), sWrenchList = new GT_HashSet<GT_ItemStack>(), sSoftHammerList = new GT_HashSet<GT_ItemStack>(), sHardHammerList = new GT_HashSet<GT_ItemStack>(), sSolderingToolList = new GT_HashSet<GT_ItemStack>(), sSolderingMetalList = new GT_HashSet<GT_ItemStack>();
+    public static final GT_HashSet<GT_ItemStack> sToolList = new GT_HashSet<GT_ItemStack>(), sCrowbarList = new GT_HashSet<GT_ItemStack>(), sScrewdriverList = new GT_HashSet<GT_ItemStack>(), sWrenchList = new GT_HashSet<GT_ItemStack>(), sSoftHammerList = new GT_HashSet<GT_ItemStack>(), sHardHammerList = new GT_HashSet<GT_ItemStack>(), sWireCutterList = new GT_HashSet<GT_ItemStack>(), sSolderingToolList = new GT_HashSet<GT_ItemStack>(), sSolderingMetalList = new GT_HashSet<GT_ItemStack>();
     /**
      * The List of Hazmat Armors
      */
@@ -170,7 +171,7 @@ public class GregTech_API {
     /**
      * The Configuration Objects
      */
-    public static GT_Config sRecipeFile = null, sMachineFile = null, sWorldgenFile = null, sMaterialProperties = null, sUnification = null, sSpecialFile = null, sClientDataFile, sOPStuff = null;
+    public static GT_Config sRecipeFile = null, sMachineFile = null, sWorldgenFile = null, sModularArmor = null, sMaterialProperties = null, sMaterialComponents = null, sUnification = null, sSpecialFile = null, sClientDataFile, sOPStuff = null;
     public static int TICKS_FOR_LAG_AVERAGING = 25, MILLISECOND_THRESHOLD_UNTIL_LAG_WARNING = 100;
     /**
      * Initialized by the Block creation.
@@ -179,7 +180,7 @@ public class GregTech_API {
 
     public static Block sBlockOres1, sBlockOresUb1, sBlockOresUb2, sBlockOresUb3, /*sBlockGem,*/ sBlockMetal1, sBlockMetal2, sBlockMetal3, sBlockMetal4, sBlockMetal5, sBlockMetal6, sBlockMetal7, sBlockMetal8, sBlockGem1, sBlockGem2, sBlockGem3, sBlockReinforced;
     public static Block sBlockGranites, sBlockConcretes, sBlockStones;
-    public static Block sBlockCasings1, sBlockCasings2, sBlockCasings3, sBlockCasings4, sBlockCasings5, sBlockCasings6;
+    public static Block sBlockCasings1, sBlockCasings2, sBlockCasings3, sBlockCasings4, sBlockCasings5, sBlockCasings6, sBlockCasings8;
     /**
      * Getting assigned by the Config
      */
@@ -191,6 +192,15 @@ public class GregTech_API {
     public static int mRFtoEU = 20;
     public static boolean mRFExplosions = true;
     public static boolean mServerStarted = false;
+    public static boolean mIC2Classic = false;
+    public static boolean mMagneticraft = false;
+    public static boolean mImmersiveEngineering = false;
+    public static boolean mGTPlusPlus = false;
+    public static boolean mTranslocator = false;
+    public static boolean mTConstruct = false;
+
+    public static boolean mUseOnlyGoodSolderingMaterials = false;
+
     private static final String aTextIC2Lower = MOD_ID_IC2.toLowerCase(Locale.ENGLISH);
     /**
      * Getting assigned by the Mod loading
@@ -563,6 +573,15 @@ public class GregTech_API {
      */
     public static boolean registerHardHammer(ItemStack aTool) {
         return registerTool(aTool, sHardHammerList);
+    }
+
+    /**
+     * Register a Wire Cutter to interact with Machines
+     * <p/>
+     * You need to register Tools in the Load Phase, because otherwise the Autodetection will assign a Tool Type in certain Cases during postload (When IToolWrench or similar Interfaces are implemented).
+     */
+    public static boolean registerWireCutter(ItemStack aTool) {
+        return registerTool(aTool, sWireCutterList);
     }
 
     /**

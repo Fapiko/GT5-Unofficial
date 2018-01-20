@@ -29,8 +29,12 @@ public class GT_MetaTileEntity_Scanner
         super(aName, aTier, 1, aDescription, aTextures, 1, 1, aGUIName, aNEIName);
     }
 
+    public GT_MetaTileEntity_Scanner(String aName, int aTier, String[] aDescription, ITexture[][][] aTextures, String aGUIName, String aNEIName) {
+        super(aName, aTier, 1, aDescription, aTextures, 1, 1, aGUIName, aNEIName);
+    }
+
     public MetaTileEntity newMetaEntity(IGregTechTileEntity aTileEntity) {
-        return new GT_MetaTileEntity_Scanner(this.mName, this.mTier, this.mDescription, this.mTextures, this.mGUIName, this.mNEIName);
+        return new GT_MetaTileEntity_Scanner(this.mName, this.mTier, this.mDescriptionArray, this.mTextures, this.mGUIName, this.mNEIName);
     }
 
     public int checkRecipe() {
@@ -90,7 +94,7 @@ public class GT_MetaTileEntity_Scanner
             if (ItemList.Tool_DataOrb.isStackEqual(getSpecialSlot(), false, true)) {
                 if (ItemList.Tool_DataOrb.isStackEqual(aStack, false, true)) {
                     aStack.stackSize -= 1;
-                    this.mOutputItems[0] = GT_Utility.copyAmount(1L, new Object[]{getSpecialSlot()});
+                    this.mOutputItems[0] = GT_Utility.copyAmount(1L, new Object[]{ItemList.Tool_DataStick.get(1, new Object[]{})});
                     calculateOverclockedNess(32,512);
                     //In case recipe is too OP for that machine
                     if (mMaxProgresstime == Integer.MAX_VALUE - 1 && mEUt == Integer.MAX_VALUE - 1)
@@ -165,28 +169,46 @@ public class GT_MetaTileEntity_Scanner
             if(ItemList.Tool_DataStick.isStackEqual(getSpecialSlot(), false, true)&& aStack !=null){
             	for(GT_Recipe.GT_Recipe_AssemblyLine tRecipe:GT_Recipe.GT_Recipe_AssemblyLine.sAssemblylineRecipes){
             	if(GT_Utility.areStacksEqual(tRecipe.mResearchItem, aStack, true)){
+            	
             	this.mOutputItems[0] = GT_Utility.copyAmount(1L, new Object[]{getSpecialSlot()});
                 GT_Utility.ItemNBT.setBookTitle(this.mOutputItems[0], GT_LanguageManager.getTranslation(tRecipe.mOutput.getDisplayName())+" Construction Data");
+
                 NBTTagCompound tNBT = this.mOutputItems[0].getTagCompound();
                 if (tNBT == null) {
                     tNBT = new NBTTagCompound();
-                }
+                }     
                 tNBT.setTag("output", tRecipe.mOutput.writeToNBT(new NBTTagCompound()));
                 tNBT.setInteger("time", tRecipe.mDuration);
                 tNBT.setInteger("eu", tRecipe.mEUt);
                 for(int i = 0 ; i < tRecipe.mInputs.length ; i++){
-                	
                 	tNBT.setTag(""+i, tRecipe.mInputs[i].writeToNBT(new NBTTagCompound()));
                 }
+                for(int i = 0 ; i < tRecipe.mOreDictAlt.length ; i++){
+                	if (tRecipe.mOreDictAlt[i] != null && tRecipe.mOreDictAlt[i].length > 0) {
+                		tNBT.setInteger("a" + i, tRecipe.mOreDictAlt[i].length);
+                		for (int j = 0; j < tRecipe.mOreDictAlt[i].length; j++) {
+                			tNBT.setTag("a" + i + ":" + j, tRecipe.mOreDictAlt[i][j].writeToNBT(new NBTTagCompound()));
+                		}
+                	}
+                }
                 for(int i = 0 ; i < tRecipe.mFluidInputs.length ; i++){
-                	
                 	tNBT.setTag("f"+i, tRecipe.mFluidInputs[i].writeToNBT(new NBTTagCompound()));
                 }
-                tNBT.setString("author", "Assembly Line Recipe Generator");
+                tNBT.setString("author", "Assembling Line Recipe Generator");
                 NBTTagList tNBTList = new NBTTagList();
-                tNBTList.appendTag(new NBTTagString("Constructionplan for "+tRecipe.mOutput.stackSize+" "+GT_LanguageManager.getTranslation(tRecipe.mOutput.getDisplayName())+". Needed EU/t: "+tRecipe.mEUt+" Productiontime: "+(tRecipe.mDuration/20)));
+                tNBTList.appendTag(new NBTTagString("Construction plan for "+tRecipe.mOutput.stackSize+" "+GT_LanguageManager.getTranslation(tRecipe.mOutput.getDisplayName())+". Needed EU/t: "+tRecipe.mEUt+" Production time: "+(tRecipe.mDuration/20)));
                 for(int i=0;i<tRecipe.mInputs.length;i++){
-                	if(tRecipe.mInputs[i]!=null){
+                	if (tRecipe.mOreDictAlt[i] != null) {
+                		int count = 0;
+                		StringBuilder tBuilder = new StringBuilder("Input Bus "+(i+1)+": ");
+                		for (ItemStack tStack : tRecipe.mOreDictAlt[i]) {
+                			if (tStack != null) {
+                				tBuilder.append((count == 0 ? "" : "\nOr ") + tStack.stackSize+" "+GT_LanguageManager.getTranslation(tStack.getDisplayName()));
+                    			count++;
+                			}
+                		}
+                		if (count > 0) tNBTList.appendTag(new NBTTagString(tBuilder.toString()));
+                	} else if(tRecipe.mInputs[i]!=null){
                 		tNBTList.appendTag(new NBTTagString("Input Bus "+(i+1)+": "+tRecipe.mInputs[i].stackSize+" "+GT_LanguageManager.getTranslation(tRecipe.mInputs[i].getDisplayName())));
                 	}
                 }
@@ -198,6 +220,7 @@ public class GT_MetaTileEntity_Scanner
                 tNBT.setTag("pages", tNBTList);
                 
                 this.mOutputItems[0].setTagCompound(tNBT);
+                
                 aStack.stackSize -= 1;
                 calculateOverclockedNess(30,tRecipe.mResearchTime);
                 //In case recipe is too OP for that machine

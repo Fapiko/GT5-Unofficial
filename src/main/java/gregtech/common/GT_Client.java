@@ -11,13 +11,13 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import gregtech.GT_Mod;
 import gregtech.api.GregTech_API;
-import gregtech.api.enums.ConfigCategories;
 import gregtech.api.enums.GT_Values;
 import gregtech.api.enums.Materials;
 import gregtech.api.interfaces.tileentity.ICoverable;
 import gregtech.api.interfaces.tileentity.ITurnable;
 import gregtech.api.metatileentity.BaseMetaPipeEntity;
-import gregtech.api.objects.GT_FluidStack;
+import gregtech.api.metatileentity.BaseTileEntity;
+import gregtech.api.objects.GT_ItemStack;
 import gregtech.api.util.GT_Log;
 import gregtech.api.util.GT_PlayedSound;
 import gregtech.api.util.GT_Recipe;
@@ -33,7 +33,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.StatFileWriter;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.oredict.OreDictionary;
@@ -82,7 +81,7 @@ public class GT_Client extends GT_Proxy
     private boolean isFirstClientPlayerTick;
     private String mMessage;
     public GT_Client() {
-        mCapeRenderer = new GT_CapeRenderer(mCapeList);
+    	mCapeRenderer = new GT_CapeRenderer(mCapeList);
         mAnimationTick = 0L;
         mAnimationDirection = false;
         isFirstClientPlayerTick = true;
@@ -140,17 +139,122 @@ public class GT_Client extends GT_Proxy
         GL11.glLineWidth(2.0F);
         GL11.glColor4f(0.0F, 0.0F, 0.0F, 0.5F);
         GL11.glBegin(1);
-        GL11.glVertex3d(0.5D, 0.0D, -0.25D);
-        GL11.glVertex3d(-0.5D, 0.0D, -0.25D);
-        GL11.glVertex3d(0.5D, 0.0D, 0.25D);
-        GL11.glVertex3d(-0.5D, 0.0D, 0.25D);
-        GL11.glVertex3d(0.25D, 0.0D, -0.5D);
-        GL11.glVertex3d(0.25D, 0.0D, 0.5D);
-        GL11.glVertex3d(-0.25D, 0.0D, -0.5D);
-        GL11.glVertex3d(-0.25D, 0.0D, 0.5D);
+        GL11.glVertex3d(+.50D, .0D, -.25D);
+        GL11.glVertex3d(-.50D, .0D, -.25D);
+        GL11.glVertex3d(+.50D, .0D, +.25D);
+        GL11.glVertex3d(-.50D, .0D, +.25D);
+        GL11.glVertex3d(+.25D, .0D, -.50D);
+        GL11.glVertex3d(+.25D, .0D, +.50D);
+        GL11.glVertex3d(-.25D, .0D, -.50D);
+        GL11.glVertex3d(-.25D, .0D, +.50D);
+        TileEntity tTile = aEvent.player.worldObj.getTileEntity(aEvent.target.blockX, aEvent.target.blockY, aEvent.target.blockZ);
+        if (tTile instanceof BaseMetaPipeEntity) {
+        	int[][] GridSwitchArr = new int[][]{
+            	{0, 5, 3, 1, 2, 4},
+            	{5, 0, 1, 3, 2, 4},
+            	{1, 3, 0, 5, 2, 4},
+            	{3, 1, 5, 0, 2, 4},
+            	{4, 2, 3, 1, 0, 5},
+            	{2, 4, 3, 1, 5, 0},
+            }; 
+        	int tConnections = ((BaseMetaPipeEntity) tTile).mConnections;
+        	for (byte i = 0; i < 6; i++) {
+        		if ((tConnections & (1 << i)) != 0) {
+        			switch (GridSwitchArr[aEvent.target.sideHit][i]) {
+        	        case 0:
+        	        	GL11.glVertex3d(+.25D, .0D, +.25D);
+        	        	GL11.glVertex3d(-.25D, .0D, -.25D);
+        	        	GL11.glVertex3d(-.25D, .0D, +.25D);
+        	        	GL11.glVertex3d(+.25D, .0D, -.25D);
+        	        	break;
+        	        case 1:
+        	        	GL11.glVertex3d(-.25D, .0D, +.50D);
+        				GL11.glVertex3d(+.25D, .0D, +.25D);
+        				GL11.glVertex3d(-.25D, .0D, +.25D);
+        				GL11.glVertex3d(+.25D, .0D, +.50D);
+        	        	break;
+        	        case 2:
+        	        	GL11.glVertex3d(-.50D, .0D, -.25D);
+        				GL11.glVertex3d(-.25D, .0D, +.25D);
+        				GL11.glVertex3d(-.50D, .0D, +.25D);
+        				GL11.glVertex3d(-.25D, .0D, -.25D);
+        	        	break;
+        	        case 3:
+        	        	GL11.glVertex3d(-.25D, .0D, -.50D);
+        				GL11.glVertex3d(+.25D, .0D, -.25D);
+        				GL11.glVertex3d(-.25D, .0D, -.25D);
+        				GL11.glVertex3d(+.25D, .0D, -.50D);
+        	        	break;
+        	        case 4:
+        	        	GL11.glVertex3d(+.50D, .0D, -.25D);
+        				GL11.glVertex3d(+.25D, .0D, +.25D);
+        				GL11.glVertex3d(+.50D, .0D, +.25D);
+        				GL11.glVertex3d(+.25D, .0D, -.25D);
+        	        	break;
+        	        case 5:
+        	        	GL11.glVertex3d(+.50D, .0D, +.50D);
+        	        	GL11.glVertex3d(+.25D, .0D, +.25D);
+        	        	GL11.glVertex3d(+.50D, .0D, +.25D);
+        	        	GL11.glVertex3d(+.25D, .0D, +.50D);
+        	        	GL11.glVertex3d(+.50D, .0D, -.50D);
+        	        	GL11.glVertex3d(+.25D, .0D, -.25D);
+        	        	GL11.glVertex3d(+.50D, .0D, -.25D);
+        	        	GL11.glVertex3d(+.25D, .0D, -.50D);
+        	        	GL11.glVertex3d(-.50D, .0D, +.50D);
+        	        	GL11.glVertex3d(-.25D, .0D, +.25D);
+        	        	GL11.glVertex3d(-.50D, .0D, +.25D);
+        	        	GL11.glVertex3d(-.25D, .0D, +.50D);
+        	        	GL11.glVertex3d(-.50D, .0D, -.50D);
+        	        	GL11.glVertex3d(-.25D, .0D, -.25D);
+        	        	GL11.glVertex3d(-.50D, .0D, -.25D);
+        	        	GL11.glVertex3d(-.25D, .0D, -.50D);
+        	        	break;
+        	        }
+        		}
+        	}
+        }
         GL11.glEnd();
         GL11.glPopMatrix();
     }
+
+    //TODO less bad
+    //@SubscribeEvent
+    //public void manipulateDensity(EntityViewRenderEvent.FogDensity event) {
+    //	if(GT_Pollution.mPlayerPollution > (GT_Mod.gregtechproxy.mPollutionSmogLimit)){
+    //    event.density = (0.15f*(Math.min(GT_Pollution.mPlayerPollution/((float)GT_Mod.gregtechproxy.mPollutionSourRainLimit),1.0f)))+0.1f;
+    //    event.setCanceled(true);
+    //	}
+    //}
+
+    //@SubscribeEvent
+    //public void manipulateColor(EntityViewRenderEvent.FogColors event) {
+    //    if(GT_Pollution.mPlayerPollution > GT_Mod.gregtechproxy.mPollutionSmogLimit){
+    //        event.red = 140f/255f;
+    //        event.green = 80f/255f;
+    //        event.blue = 40f/255f;
+    //	}
+    //}
+
+    //@SubscribeEvent
+    //public void manipulateGrassColor(BiomeEvent.GetGrassColor event) {
+    //	if(GT_Pollution.mPlayerPollution > GT_Mod.gregtechproxy.mPollutionSmogLimit){
+    //        event.newColor = 0xD2691E;
+    //	}
+    //}
+
+    //@SubscribeEvent
+    //public void manipulateWaterColor(BiomeEvent.GetWaterColor event) {
+    //	if(GT_Pollution.mPlayerPollution > GT_Mod.gregtechproxy.mPollutionSmogLimit){
+    //        event.newColor = 0x556B2F;
+    //	}
+    //}
+
+    //@SubscribeEvent
+    //public void manipulateFoliageColor(BiomeEvent.GetFoliageColor event) {
+    //	if(GT_Pollution.mPlayerPollution > GT_Mod.gregtechproxy.mPollutionSmogLimit){
+    //        event.newColor = 0xCD853F;
+    //	}
+    //}
 
     public boolean isServerSide() {
         return true;
@@ -194,7 +298,6 @@ public class GT_Client extends GT_Proxy
             String tName = arr$[i$];
             mCapeList.add(tName.toLowerCase());
         }
-
         (new Thread(this)).start();
     }
 
@@ -219,9 +322,7 @@ public class GT_Client extends GT_Proxy
                         GregTech_API.METATILEENTITIES[i].getStackForm(1L).getTooltip(null, true);
                     i++;
                 } while (true);
-            } catch (Throwable e) {
-                e.printStackTrace(GT_Log.err);
-            }
+        } catch (Throwable e) {e.printStackTrace(GT_Log.err);}
 
 
 //        super.onPostLoad();
@@ -268,7 +369,7 @@ public class GT_Client extends GT_Proxy
               }
                  } catch (Throwable e) {
             }
-        try {
+        /**try {
             GT_Log.out.println("GT_Mod: Downloading News.");
             @SuppressWarnings("resource")
             Scanner tScanner = new Scanner(new URL("http://files.minecraftforge.net/maven/com/gregoriust/gregtech/message.txt").openStream());
@@ -276,7 +377,7 @@ public class GT_Client extends GT_Proxy
                 this.mMessage = (this.mMessage + tScanner.nextLine() + " ");
             }
         } catch (Throwable e) {
-        }
+        }**/
     }
     
     @SubscribeEvent
@@ -292,7 +393,7 @@ public class GT_Client extends GT_Proxy
                 afterSomeTime=0;
                 StatFileWriter sfw= Minecraft.getMinecraft().thePlayer.getStatFileWriter();
                 try {
-                    for(GT_Recipe recipe:GT_Recipe.GT_Recipe_Map.sAssemblylineFakeRecipes.mRecipeList){
+                    for(GT_Recipe recipe:GT_Recipe.GT_Recipe_Map.sAssemblylineVisualRecipes.mRecipeList){
                         recipe.mHidden=!sfw.hasAchievementUnlocked(GT_Mod.achievements.getAchievement(recipe.getOutput(0).getUnlocalizedName()));
                     }
                 }catch (Exception e){}
@@ -309,7 +410,8 @@ public class GT_Client extends GT_Proxy
             for (Iterator i$ = tList.iterator(); i$.hasNext(); GT_Utility.sPlayedSoundMap.remove(tKey)) {
                 tKey = (GT_PlayedSound) i$.next();
             }
-            if ((this.isFirstClientPlayerTick) && (aEvent.player == GT_Values.GT.getThePlayer())) {
+            if(GregTech_API.mServerStarted == false)GregTech_API.mServerStarted = true;
+            /*if ((this.isFirstClientPlayerTick) && (aEvent.player == GT_Values.GT.getThePlayer())) {
                 this.isFirstClientPlayerTick = false;
                 GT_FluidStack.fixAllThoseFuckingFluidIDs();
                 if ((this.mMessage.length() > 5) && (GregTech_API.sSpecialFile.get(ConfigCategories.news, this.mMessage, true))) {
@@ -331,7 +433,7 @@ public class GT_Client extends GT_Proxy
                     aEvent.player.addChatComponentMessage(new ChatComponentText("GregTech: Please get the recommended Version of IndustrialCraft here:"));
                     aEvent.player.addChatComponentMessage(new ChatComponentText("ic2api.player.to:8080/job/IC2_experimental/" + (GT_Mod.MAX_IC2 < Integer.MAX_VALUE ? GT_Mod.MAX_IC2 : 624) + "/"));
                 }
-            }
+            }*/
         }
     }
 
@@ -342,12 +444,16 @@ public class GT_Client extends GT_Proxy
             TileEntity aTileEntity = aEvent.player.worldObj.getTileEntity(aEvent.target.blockX, aEvent.target.blockY, aEvent.target.blockZ);
             try {
                 Class.forName("codechicken.lib.vec.Rotation");
-                if (((aTileEntity instanceof BaseMetaPipeEntity)) && (((ICoverable) aTileEntity).getCoverIDAtSide((byte) aEvent.target.sideHit) == 0) && ((GT_Utility.isStackInList(aEvent.currentItem, GregTech_API.sCovers.keySet())) || (GT_Utility.isStackInList(aEvent.currentItem, GregTech_API.sCrowbarList)) || (GT_Utility.isStackInList(aEvent.currentItem, GregTech_API.sScrewdriverList)))) {
+                if (((aTileEntity instanceof BaseMetaPipeEntity)) && (((ICoverable) aTileEntity).getCoverIDAtSide((byte) aEvent.target.sideHit) == 0) && ((GT_Utility.isStackInList(aEvent.currentItem, GregTech_API.sCovers.keySet())) || (GT_Utility.isStackInList(aEvent.currentItem, GregTech_API.sCrowbarList)) || (GT_Utility.isStackInList(aEvent.currentItem, GregTech_API.sWireCutterList)) || (GT_Utility.isStackInList(aEvent.currentItem, GregTech_API.sScrewdriverList))|| GT_Utility.isStackInList(aEvent.currentItem, GregTech_API.sSolderingToolList))) {
                     drawGrid(aEvent);
                     return;
                 }
-                if ((((aTileEntity instanceof ITurnable)) || (ROTATABLE_VANILLA_BLOCKS.contains(aBlock)) || ((aTileEntity instanceof IWrenchable))) && (GT_Utility.isStackInList(aEvent.currentItem, GregTech_API.sWrenchList))) {
+                if ((aTileEntity instanceof ITurnable || ROTATABLE_VANILLA_BLOCKS.contains(aBlock) || aTileEntity instanceof IWrenchable) && GT_Utility.isStackInList(aEvent.currentItem, GregTech_API.sWrenchList)) {
                     drawGrid(aEvent);
+                    return;
+                }
+                if (aTileEntity instanceof BaseTileEntity && (GT_Utility.isStackInList(aEvent.currentItem, GregTech_API.sWireCutterList) || GT_Utility.isStackInList(aEvent.currentItem, GregTech_API.sSolderingToolList))) {
+                	drawGrid(aEvent);
                     return;
                 }
             } catch (Throwable e) {
@@ -551,15 +657,25 @@ public class GT_Client extends GT_Proxy
         try {
             EntityPlayer player = Minecraft.getMinecraft().thePlayer;
             if (player == null) return 0;
-            ItemStack held = player.getCurrentEquippedItem();
-            if (held == null) return 0;
-            int[] ids = OreDictionary.getOreIDs(held);
+            ItemStack tCurrentItem = player.getCurrentEquippedItem();
+            if (tCurrentItem == null) return 0;
+            int[] ids = OreDictionary.getOreIDs(tCurrentItem);
             int hide = 0;
             for (int i : ids) {
                 if (OreDictionary.getOreName(i).equals("craftingToolSolderingIron")) {
                     hide |= 0x1;
                     break;
                 }
+            }
+            if (GT_Utility.isStackInList(tCurrentItem, GregTech_API.sWrenchList)
+            		|| GT_Utility.isStackInList(tCurrentItem, GregTech_API.sScrewdriverList)
+            		|| GT_Utility.isStackInList(tCurrentItem, GregTech_API.sHardHammerList)
+            		|| GT_Utility.isStackInList(tCurrentItem, GregTech_API.sSoftHammerList)
+            		|| GT_Utility.isStackInList(tCurrentItem, GregTech_API.sWireCutterList)
+            		|| GT_Utility.isStackInList(tCurrentItem, GregTech_API.sSolderingToolList)
+            		|| GT_Utility.isStackInList(tCurrentItem, GregTech_API.sCrowbarList)
+            		|| GregTech_API.sCovers.containsKey(new GT_ItemStack(tCurrentItem))) {
+            	hide |= 0x2;
             }
             return hide;
         }catch(Exception e){

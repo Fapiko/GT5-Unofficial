@@ -13,8 +13,7 @@ import gregtech.api.util.GT_Utility;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 
-public class GT_MetaTileEntity_Furnace_Steel
-        extends GT_MetaTileEntity_BasicMachine_Steel {
+public class GT_MetaTileEntity_Furnace_Steel extends GT_MetaTileEntity_BasicMachine_Steel {
     public GT_MetaTileEntity_Furnace_Steel(int aID, String aName, String aNameRegional) {
         super(aID, aName, aNameRegional, "Smelting things with compressed Steam", 1, 1, true);
     }
@@ -23,17 +22,21 @@ public class GT_MetaTileEntity_Furnace_Steel
         super(aName, aDescription, aTextures, 1, 1, true);
     }
 
+    public GT_MetaTileEntity_Furnace_Steel(String aName, String[] aDescription, ITexture[][][] aTextures) {
+        super(aName, aDescription, aTextures, 1, 1, true);
+    }
+
     public Object getClientGUI(int aID, InventoryPlayer aPlayerInventory, IGregTechTileEntity aBaseMetaTileEntity) {
         return new GT_GUIContainer_BasicMachine(aPlayerInventory, aBaseMetaTileEntity, getLocalName(), "SteelFurnace.png", "smelting");
     }
 
     public MetaTileEntity newMetaEntity(IGregTechTileEntity aTileEntity) {
-        return new GT_MetaTileEntity_Furnace_Steel(this.mName, this.mDescription, this.mTextures);
+        return new GT_MetaTileEntity_Furnace_Steel(this.mName, this.mDescriptionArray, this.mTextures);
     }
 
     public int checkRecipe() {
         if (null != (this.mOutputItems[0] = GT_ModHandler.getSmeltingOutput(getInputAt(0), true, getOutputAt(0)))) {
-            this.mEUt = 12;
+            this.mEUt = 8;
             this.mMaxProgresstime = 128;
             return 2;
         }

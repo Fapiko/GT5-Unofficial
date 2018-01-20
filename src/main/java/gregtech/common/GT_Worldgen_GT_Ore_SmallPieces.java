@@ -5,13 +5,12 @@ import gregtech.api.enums.Materials;
 import gregtech.api.util.GT_Log;
 import gregtech.api.world.GT_Worldgen;
 import gregtech.common.blocks.GT_TileEntity_Ores;
-import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkProvider;
 
 import java.util.Random;
 
-import static gregtech.api.enums.GT_Values.D1;
+import static gregtech.api.enums.GT_Values.debugSmallOres;
 
 public class GT_Worldgen_GT_Ore_SmallPieces
         extends GT_Worldgen {
@@ -25,8 +24,8 @@ public class GT_Worldgen_GT_Ore_SmallPieces
 
     public final String mBiome;
     public final String aTextWorldgen = "worldgen.";
-
-    public GT_Worldgen_GT_Ore_SmallPieces(String aName, boolean aDefault, int aMinY, int aMaxY, int aAmount, boolean aOverworld, boolean aNether, boolean aEnd, Materials aPrimary) {
+    //TODO CHECk IF INSTANTIATION IS CORRECT
+    public GT_Worldgen_GT_Ore_SmallPieces(String aName, boolean aDefault, int aMinY, int aMaxY, int aAmount, boolean aOverworld, boolean aNether, boolean aEnd, boolean GC_UNUSED1, boolean GC_UNUSED2, boolean GC_UNUSED3, Materials aPrimary) {
         super(aName, GregTech_API.sWorldgenList, aDefault);
         this.mOverworld = GregTech_API.sWorldgenFile.get(aTextWorldgen + this.mWorldGenName, "Overworld", aOverworld);
         this.mNether = GregTech_API.sWorldgenFile.get(aTextWorldgen + this.mWorldGenName, "Nether", aNether);
@@ -46,20 +45,21 @@ public class GT_Worldgen_GT_Ore_SmallPieces
             return false;
         }
         int count=0;
+    
         if (this.mMeta > 0) {
-            int i = 0;
-            for (int j = Math.max(1, this.mAmount / 2 + aRandom.nextInt(this.mAmount) / 2); i < j; i++) {
-                GT_TileEntity_Ores.setOreBlock(aWorld, aChunkX + aRandom.nextInt(16), this.mMinY + aRandom.nextInt(Math.max(1, this.mMaxY - this.mMinY)), aChunkZ + aRandom.nextInt(16), this.mMeta, true);
+            int j = Math.max(1, this.mAmount / 2 + aRandom.nextInt(this.mAmount) / 2);
+            for ( int i = 0; i < j; i++) {
+                GT_TileEntity_Ores.setOreBlock(aWorld, aChunkX + 8 + aRandom.nextInt(16), this.mMinY + aRandom.nextInt(Math.max(1, this.mMaxY - this.mMinY)), aChunkZ + 8 + aRandom.nextInt(16), this.mMeta, true);
                 count++;
             }
         }
-        if(D1){
+        if(debugSmallOres){
             GT_Log.out.println(
                     "Small Ore:" + this.mWorldGenName +
                             " @ dim="+aDimensionType+
-                            " chunkX="+aChunkX+
-                            " chunkZ="+aChunkZ+
-                            " ore="+count+" "+new ItemStack(GregTech_API.sBlockOres1,1,mMeta).getDisplayName()
+                            " mX="+aChunkX/16+
+                            " mZ="+aChunkZ/16+
+                            " ore="+count
             );
         }
         return true;

@@ -1,6 +1,7 @@
 package gregtech.api.items;
 
 import buildcraft.api.tools.IToolWrench;
+import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Optional;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -17,6 +18,7 @@ import gregtech.api.util.GT_LanguageManager;
 import gregtech.api.util.GT_ModHandler;
 import gregtech.api.util.GT_OreDictUnificator;
 import gregtech.api.util.GT_Utility;
+import gregtech.common.tools.GT_Tool_Turbine;
 import mods.railcraft.api.core.items.IToolCrowbar;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -41,6 +43,7 @@ import net.minecraft.util.IIcon;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IShearable;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.world.BlockEvent;
 
 import java.util.ArrayList;
@@ -53,7 +56,7 @@ import static gregtech.api.enums.GT_Values.MOD_ID_RC;
 
 /**
  * This is an example on how you can create a Tool ItemStack, in this case a Bismuth Wrench:
- * GT_MetaGenerated_Tool.sInstances.get("gt.metatool.01").getToolWithStats(16, 1, Materials.Bismuth, Materials.Bismuth, null);
+ * GT_MetaGenerated_Tool.sInstances.get("gt.metatool.01").getToolWithStats(GT_MetaGenerated_Tool_01.WRENCH, 1, Materials.Bismuth, Materials.Bismuth, null);
  */
 @Optional.InterfaceList(value = {@Optional.Interface(iface = "forestry.api.arboriculture.IToolGrafter", modid = MOD_ID_FR), @Optional.Interface(iface = "mods.railcraft.api.core.items.IToolCrowbar", modid = MOD_ID_RC), @Optional.Interface(iface = "buildcraft.api.tools.IToolWrench", modid = "BuildCraft"), @Optional.Interface(iface = "crazypants.enderio.api.tool.ITool", modid = "EnderIO")})
 public abstract class GT_MetaGenerated_Tool extends GT_MetaBase_Item implements IDamagableItem, IToolGrafter, IToolCrowbar, IToolWrench, ITool {
@@ -184,10 +187,10 @@ public abstract class GT_MetaGenerated_Tool extends GT_MetaBase_Item implements 
         if (tToolStats != null) {
             NBTTagCompound tMainNBT = new NBTTagCompound(), tToolNBT = new NBTTagCompound();
             if (aPrimaryMaterial != null) {
-                tToolNBT.setString("PrimaryMaterial", aPrimaryMaterial.toString());
+                tToolNBT.setString("PrimaryMaterial", aPrimaryMaterial.mName);
                 tToolNBT.setLong("MaxDamage", 100L * (long) (aPrimaryMaterial.mDurability * tToolStats.getMaxDurabilityMultiplier()));
             }
-            if (aSecondaryMaterial != null) tToolNBT.setString("SecondaryMaterial", aSecondaryMaterial.toString());
+            if (aSecondaryMaterial != null) tToolNBT.setString("SecondaryMaterial", aSecondaryMaterial.mName);
 
             if (aElectricArray != null) {
                 tToolNBT.setBoolean("Electric", true);
@@ -207,10 +210,18 @@ public abstract class GT_MetaGenerated_Tool extends GT_MetaBase_Item implements 
     /**
      * Called by the Block Harvesting Event within the GT_Proxy
      */
+    @Mod.EventHandler
     public void onHarvestBlockEvent(ArrayList<ItemStack> aDrops, ItemStack aStack, EntityPlayer aPlayer, Block aBlock, int aX, int aY, int aZ, byte aMetaData, int aFortune, boolean aSilkTouch, BlockEvent.HarvestDropsEvent aEvent) {
         IToolStats tStats = getToolStats(aStack);
         if (isItemStackUsable(aStack) && getDigSpeed(aStack, aBlock, aMetaData) > 0.0F)
             doDamage(aStack, tStats.convertBlockDrops(aDrops, aStack, aPlayer, aBlock, aX, aY, aZ, aMetaData, aFortune, aSilkTouch, aEvent) * tStats.getToolDamagePerDropConversion());
+    }
+    
+    @Mod.EventHandler
+    public float onBlockBreakSpeedEvent(float aDefault, ItemStack aStack, EntityPlayer aPlayer, Block aBlock, int aX, int aY, int aZ, byte aMetaData, PlayerEvent.BreakSpeed aEvent)
+    {
+      IToolStats tStats = getToolStats(aStack); 
+      return tStats == null ? aDefault : tStats.getMiningSpeed(aBlock, aMetaData, aDefault, aPlayer, aPlayer.worldObj, aX, aY, aZ);
     }
     
     @Override
@@ -308,12 +319,15 @@ public abstract class GT_MetaGenerated_Tool extends GT_MetaBase_Item implements 
     @Override
     @SideOnly(Side.CLIENT)
     public final void getSubItems(Item var1, CreativeTabs aCreativeTab, List aList) {
-        for (int i = 0; i < 32766; i += 2)
+        for (int i = 0; i < 32766; i += 2) {
             if (getToolStats(new ItemStack(this, 1, i)) != null) {
                 ItemStack tStack = new ItemStack(this, 1, i);
                 isItemStackUsable(tStack);
                 aList.add(tStack);
+                aList.add(getToolWithStats(i,1,Materials.Neutronium,Materials.Neutronium,null));
             }
+
+        }
     }
 
     @Override
@@ -334,21 +348,35 @@ public abstract class GT_MetaGenerated_Tool extends GT_MetaBase_Item implements 
         IToolStats tStats = getToolStats(aStack);
         int tOffset = getElectricStats(aStack) != null ? 2 : 1;
         if (tStats != null) {
-            String name = aStack.getUnlocalizedName();
-            if (name.equals("gt.metatool.01.170") || name.equals("gt.metatool.01.172") || name.equals("gt.metatool.01.174") || name.equals("gt.metatool.01.176")) {
+            if (tStats instanceof GT_Tool_Turbine) {
                 int aOptFlow=GT_Utility.safeInt((long)Math.max(Float.MIN_NORMAL, ((GT_MetaGenerated_Tool) aStack.getItem()).getToolStats(aStack).getSpeedMultiplier() * ((GT_MetaGenerated_Tool) aStack.getItem()).getPrimaryMaterial(aStack).mToolSpeed * 50));
-                aList.add(tOffset + 0, EnumChatFormatting.WHITE + "Durability: " + EnumChatFormatting.GREEN + (tMaxDamage - getToolDamage(aStack)) + " / " + tMaxDamage + EnumChatFormatting.GRAY);
-                aList.add(tOffset + 1, EnumChatFormatting.WHITE + tMaterial.mDefaultLocalName + EnumChatFormatting.YELLOW + " lvl " + getHarvestLevel(aStack, "") + EnumChatFormatting.GRAY);
-                aList.add(tOffset + 2, EnumChatFormatting.WHITE + "Turbine Efficency: " + EnumChatFormatting.BLUE + (50.0F + (10.0F * getToolCombatDamage(aStack))) + EnumChatFormatting.GRAY);
-                aList.add(tOffset + 3, EnumChatFormatting.WHITE + "Optimal Steam flow: " + EnumChatFormatting.GOLD + aOptFlow + EnumChatFormatting.GRAY + " L/t");
-                aList.add(tOffset + 3, EnumChatFormatting.WHITE + "Optimal Gas flow (Burn energy per tick): " + EnumChatFormatting.GOLD + aOptFlow + EnumChatFormatting.GRAY + " EU/t");
-                aList.add(tOffset + 3, EnumChatFormatting.WHITE + "Optimal Plasma flow (Plasma energy per tick): " + EnumChatFormatting.GOLD + aOptFlow*40 + EnumChatFormatting.GRAY + " EU/s");
+                aList.add(tOffset + 0, EnumChatFormatting.WHITE + String.format(trans("001", "Durability: %s/%s"), "" + EnumChatFormatting.GREEN + (tMaxDamage - getToolDamage(aStack)) + " ", " " + tMaxDamage) + EnumChatFormatting.GRAY);
+                aList.add(tOffset + 1, EnumChatFormatting.WHITE + String.format(trans("002", "%s lvl %s"), tMaterial.mLocalizedName + EnumChatFormatting.YELLOW, "" + getHarvestLevel(aStack, "")) + EnumChatFormatting.GRAY);
+                aList.add(tOffset + 2, EnumChatFormatting.WHITE + String.format(trans("005", "Turbine Efficiency: %s"), "" + EnumChatFormatting.BLUE + (50.0F + (10.0F * getToolCombatDamage(aStack)))) + EnumChatFormatting.GRAY);
+                aList.add(tOffset + 3, EnumChatFormatting.WHITE + String.format(trans("006", "Optimal Steam flow: %sL/sec"), "" + EnumChatFormatting.GOLD + Math.max(Float.MIN_NORMAL, tStats.getSpeedMultiplier() * getPrimaryMaterial(aStack).mToolSpeed * 1000) + EnumChatFormatting.GRAY));
+                {
+                    int aBaseEff=(int)(5+getToolCombatDamage(aStack))*1000;
+                    int aOptFlowLoose=aOptFlow*4;
+                    if(aBaseEff>10000){
+                        aOptFlowLoose*=Math.pow(1.1f,((aBaseEff-7500)/10000F)*20f);
+                        aBaseEff=7500;
+                    }else if(aBaseEff>7500){
+                        aOptFlowLoose*=Math.pow(1.1f,((aBaseEff-7500)/10000F)*20f);
+                        aBaseEff*=0.75f;
+                    }else{
+                        aBaseEff*=0.75f;
+                    }
+                    aList.add(tOffset + 4, EnumChatFormatting.GRAY + String.format(trans("500", "Turbine Efficiency (Loose): %s"), "" + EnumChatFormatting.BLUE + aBaseEff/100f) + EnumChatFormatting.DARK_GRAY);
+                    aList.add(tOffset + 5, EnumChatFormatting.GRAY + String.format(trans("501", "Optimal Steam flow (Loose): %s L/t"), "" + EnumChatFormatting.GOLD + aOptFlowLoose + EnumChatFormatting.DARK_GRAY));
+                }
+                aList.add(tOffset + 6, EnumChatFormatting.WHITE + String.format(trans("007", "Optimal Gas flow(EU burnvalue per tick): %sEU/t"), "" + EnumChatFormatting.GOLD + Math.max(Float.MIN_NORMAL, tStats.getSpeedMultiplier() * getPrimaryMaterial(aStack).mToolSpeed * 50) + EnumChatFormatting.GRAY));
+                aList.add(tOffset + 7, EnumChatFormatting.WHITE + String.format(trans("008", "Optimal Plasma flow(Plasma energyvalue per tick): %sEU/t"), "" + EnumChatFormatting.GOLD + Math.max(Float.MIN_NORMAL, tStats.getSpeedMultiplier() * getPrimaryMaterial(aStack).mToolSpeed * 2000) + EnumChatFormatting.GRAY));
 
             } else {
-                aList.add(tOffset + 0, EnumChatFormatting.WHITE + "Durability: " + EnumChatFormatting.GREEN + (tMaxDamage - getToolDamage(aStack)) + " / " + tMaxDamage + EnumChatFormatting.GRAY);
-                aList.add(tOffset + 1, EnumChatFormatting.WHITE + tMaterial.mDefaultLocalName + EnumChatFormatting.YELLOW + " lvl " + getHarvestLevel(aStack, "") + EnumChatFormatting.GRAY);
-                aList.add(tOffset + 2, EnumChatFormatting.WHITE + "Attack Damage: " + EnumChatFormatting.BLUE + getToolCombatDamage(aStack) + EnumChatFormatting.GRAY);
-                aList.add(tOffset + 3, EnumChatFormatting.WHITE + "Mining Speed: " + EnumChatFormatting.LIGHT_PURPLE + Math.max(Float.MIN_NORMAL, tStats.getSpeedMultiplier() * getPrimaryMaterial(aStack).mToolSpeed) + EnumChatFormatting.GRAY);
+            	aList.add(tOffset + 0, EnumChatFormatting.WHITE + String.format(trans("001", "Durability: %s/%s"), "" + EnumChatFormatting.GREEN + (tMaxDamage - getToolDamage(aStack)) + " ", " " + tMaxDamage) + EnumChatFormatting.GRAY);
+                aList.add(tOffset + 1, EnumChatFormatting.WHITE + String.format(trans("002", "%s lvl %s"), tMaterial.mLocalizedName + EnumChatFormatting.YELLOW, "" + getHarvestLevel(aStack, "")) + EnumChatFormatting.GRAY);
+                aList.add(tOffset + 2, EnumChatFormatting.WHITE + String.format(trans("003", "Attack Damage: %s"), "" + EnumChatFormatting.BLUE + getToolCombatDamage(aStack)) + EnumChatFormatting.GRAY);
+                aList.add(tOffset + 3, EnumChatFormatting.WHITE + String.format(trans("004", "Mining Speed: %s"), "" + EnumChatFormatting.GOLD + Math.max(Float.MIN_NORMAL, tStats.getSpeedMultiplier() * getPrimaryMaterial(aStack).mToolSpeed)) + EnumChatFormatting.GRAY);
                 NBTTagCompound aNBT = aStack.getTagCompound();
                 if (aNBT != null) {
                     aNBT = aNBT.getCompoundTag("GT.ToolStats");

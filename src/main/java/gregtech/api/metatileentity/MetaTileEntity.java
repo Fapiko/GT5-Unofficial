@@ -2,16 +2,15 @@ package gregtech.api.metatileentity;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import gregtech.GT_Mod;
 import gregtech.api.GregTech_API;
 import gregtech.api.interfaces.metatileentity.IMetaTileEntity;
 import gregtech.api.interfaces.tileentity.IGregTechTileEntity;
+import gregtech.api.metatileentity.implementations.GT_MetaPipeEntity_Cable;
 import gregtech.api.objects.GT_ItemStack;
 import gregtech.api.util.GT_Config;
 import gregtech.api.util.GT_LanguageManager;
 import gregtech.api.util.GT_ModHandler;
 import gregtech.api.util.GT_Utility;
-import gregtech.common.GT_Pollution;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -21,8 +20,8 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -35,7 +34,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import static gregtech.api.enums.GT_Values.GT;
 import static gregtech.api.enums.GT_Values.V;
 
 /**
@@ -89,10 +87,10 @@ public abstract class MetaTileEntity implements IMetaTileEntity {
         GT_LanguageManager.addStringLocalization("gt.blockmachines." + mName + ".name", aRegionalName);
         mInventory = new ItemStack[aInvSlotCount];
 
-        if (GT.isClientSide()) {
-            ItemStack tStack = new ItemStack(GregTech_API.sBlockMachines, 1, aID);
-            tStack.getItem().addInformation(tStack, null, new ArrayList<String>(), true);
-        }
+//        if (GT.isClientSide()) {
+//            ItemStack tStack = new ItemStack(GregTech_API.sBlockMachines, 1, aID);
+//            tStack.getItem().addInformation(tStack, null, new ArrayList<String>(), true);
+//        }
     }
 
     /**
@@ -161,6 +159,30 @@ public abstract class MetaTileEntity implements IMetaTileEntity {
         if (getBaseMetaTileEntity().isValidFacing(aWrenchingSide)) {
             getBaseMetaTileEntity().setFrontFacing(aWrenchingSide);
             return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean onWireCutterRightClick(byte aSide, byte aWrenchingSide, EntityPlayer aPlayer, float aX, float aY, float aZ) {
+        if(!aPlayer.isSneaking()) return false;
+        byte tSide = GT_Utility.getOppositeSide(aWrenchingSide);
+        TileEntity tTileEntity = getBaseMetaTileEntity().getTileEntityAtSide(aWrenchingSide);
+        if (tTileEntity != null && (tTileEntity instanceof IGregTechTileEntity) && (((IGregTechTileEntity) tTileEntity).getMetaTileEntity() instanceof GT_MetaPipeEntity_Cable)) {
+            // The tile entity we're facing is a cable, let's try to connect to it
+            return ((IGregTechTileEntity) tTileEntity).getMetaTileEntity().onWireCutterRightClick(aWrenchingSide, tSide, aPlayer, aX, aY, aZ);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean onSolderingToolRightClick(byte aSide, byte aWrenchingSide, EntityPlayer aPlayer, float aX, float aY, float aZ) {
+        if(!aPlayer.isSneaking()) return false;
+        byte tSide = GT_Utility.getOppositeSide(aWrenchingSide);
+        TileEntity tTileEntity = getBaseMetaTileEntity().getTileEntityAtSide(aWrenchingSide);
+        if (tTileEntity != null && (tTileEntity instanceof IGregTechTileEntity) && (((IGregTechTileEntity) tTileEntity).getMetaTileEntity() instanceof GT_MetaPipeEntity_Cable)) {
+            // The tile entity we're facing is a cable, let's try to connect to it
+            return ((IGregTechTileEntity) tTileEntity).getMetaTileEntity().onSolderingToolRightClick(aWrenchingSide, tSide, aPlayer, aX, aY, aZ);
         }
         return false;
     }
@@ -857,8 +879,6 @@ public abstract class MetaTileEntity implements IMetaTileEntity {
         GT_Utility.sendSoundToPlayers(tWorld, GregTech_API.sSoundList.get(209), 1.0F, -1, tX, tY, tZ);
         tWorld.setBlock(tX, tY, tZ, Blocks.air);
         if (GregTech_API.sMachineExplosions)
-            if(GT_Mod.gregtechproxy.mPollution)
-                GT_Pollution.addPollution(new ChunkPosition(tX, tY, tZ), 100000);
             tWorld.createExplosion(null, tX + 0.5, tY + 0.5, tZ + 0.5, tStrength, true);
     }
 
@@ -886,5 +906,24 @@ public abstract class MetaTileEntity implements IMetaTileEntity {
     @Override
     public void onCreated(ItemStack aStack, World aWorld, EntityPlayer aPlayer) {
         //
+    }
+    
+    @Override
+    public boolean allowGeneralRedstoneOutput(){
+    	return false;
+    }
+    
+    public String trans(String aKey, String aEnglish){
+    	return GT_LanguageManager.addStringLocalization("Interaction_DESCRIPTION_Index_"+aKey, aEnglish, false);
+    }
+    
+    @Override
+    public boolean hasAlternativeModeText(){
+    	return false;
+    }
+    
+    @Override
+    public String getAlternativeModeText(){
+    	return "";
     }
 }

@@ -12,6 +12,7 @@ import gregtech.api.objects.GT_RenderedTexture;
 import gregtech.api.objects.ItemData;
 import gregtech.api.util.GT_OreDictUnificator;
 import gregtech.api.util.GT_Utility;
+import gregtech.common.GT_UndergroundOil;
 import gregtech.common.blocks.GT_Block_Ores_Abstract;
 import gregtech.common.blocks.GT_TileEntity_Ores;
 import ic2.core.Ic2Items;
@@ -31,26 +32,32 @@ public class GT_MetaTileEntity_SeismicProspector extends GT_MetaTileEntity_Basic
     boolean ready = false;
 
     public GT_MetaTileEntity_SeismicProspector(int aID, String aName, String aNameRegional, int aTier) {
-        super(aID, aName, aNameRegional, aTier, 1, "Place, activate with explosives(8 Dynamite, 1 Glyceryl, 4 TNT or 2 ITNT), use Data Stick then Print.", 1, 1, "Default.png", "", new ITexture[]{new GT_RenderedTexture(Textures.BlockIcons.OVERLAY_SIDE_ROCK_BREAKER_ACTIVE), new GT_RenderedTexture(Textures.BlockIcons.OVERLAY_SIDE_ROCK_BREAKER), new GT_RenderedTexture(Textures.BlockIcons.OVERLAY_TOP_ROCK_BREAKER_ACTIVE), new GT_RenderedTexture(Textures.BlockIcons.OVERLAY_TOP_ROCK_BREAKER), new GT_RenderedTexture(Textures.BlockIcons.OVERLAY_FRONT_ROCK_BREAKER_ACTIVE), new GT_RenderedTexture(Textures.BlockIcons.OVERLAY_FRONT_ROCK_BREAKER), new GT_RenderedTexture(Textures.BlockIcons.OVERLAY_BOTTOM_ROCK_BREAKER_ACTIVE), new GT_RenderedTexture(Textures.BlockIcons.OVERLAY_BOTTOM_ROCK_BREAKER)});
+        super(aID, aName, aNameRegional, aTier, 1, "Place, activate with explosives(8 Dynamite, 1 Glyceryl, 4 TNT, 16 Powder Barrels or 2 ITNT), use Data Stick then Print.", 1, 1, "Default.png", "", new ITexture[]{new GT_RenderedTexture(Textures.BlockIcons.OVERLAY_SIDE_ROCK_BREAKER_ACTIVE), new GT_RenderedTexture(Textures.BlockIcons.OVERLAY_SIDE_ROCK_BREAKER), new GT_RenderedTexture(Textures.BlockIcons.OVERLAY_TOP_ROCK_BREAKER_ACTIVE), new GT_RenderedTexture(Textures.BlockIcons.OVERLAY_TOP_ROCK_BREAKER), new GT_RenderedTexture(Textures.BlockIcons.OVERLAY_FRONT_ROCK_BREAKER_ACTIVE), new GT_RenderedTexture(Textures.BlockIcons.OVERLAY_FRONT_ROCK_BREAKER), new GT_RenderedTexture(Textures.BlockIcons.OVERLAY_BOTTOM_ROCK_BREAKER_ACTIVE), new GT_RenderedTexture(Textures.BlockIcons.OVERLAY_BOTTOM_ROCK_BREAKER)});
     }
 
     public GT_MetaTileEntity_SeismicProspector(String aName, int aTier, String aDescription, ITexture[][][] aTextures, String aGUIName, String aNEIName) {
         super(aName, aTier, 1, aDescription, aTextures, 1, 1, aGUIName, aNEIName);
     }
 
+    public GT_MetaTileEntity_SeismicProspector(String aName, int aTier, String[] aDescription, ITexture[][][] aTextures, String aGUIName, String aNEIName) {
+        super(aName, aTier, 1, aDescription, aTextures, 1, 1, aGUIName, aNEIName);
+    }
+
     public MetaTileEntity newMetaEntity(IGregTechTileEntity aTileEntity) {
-        return new GT_MetaTileEntity_SeismicProspector(this.mName, this.mTier, this.mDescription, this.mTextures, this.mGUIName, this.mNEIName);
+        return new GT_MetaTileEntity_SeismicProspector(this.mName, this.mTier, this.mDescriptionArray, this.mTextures, this.mGUIName, this.mNEIName);
     }
 
     @Override
     public boolean onRightclick(IGregTechTileEntity aBaseMetaTileEntity, EntityPlayer aPlayer) {
         if (aBaseMetaTileEntity.isServerSide()) {
             ItemStack aStack = aPlayer.getCurrentEquippedItem();
+            ItemData stackData= GT_OreDictUnificator.getItemData(aStack);
             if (!ready && (aStack != null) && (
-            		(aStack.getItem() == Item.getItemFromBlock(Blocks.tnt) && aStack.stackSize > 3 ) || 
-            		(aStack.getItem() == Ic2Items.industrialTnt.getItem()  && aStack.stackSize > 1 ) ||
-            		(aStack.getItem() == Ic2Items.dynamite.getItem()  	   && aStack.stackSize > 7 ) ||
-            		(GT_OreDictUnificator.getItemData(aStack).mMaterial.mMaterial == Materials.Glyceryl  && aStack.stackSize > 0 )
+            		(aStack.getItem() == Item.getItemFromBlock(Blocks.tnt) && aStack.stackSize >= 4 ) ||
+            		(aStack.getItem() == Ic2Items.industrialTnt.getItem()  && aStack.stackSize >= 2 ) ||
+            		(aStack.getItem() == Ic2Items.dynamite.getItem()  	   && aStack.stackSize >= 8 ) ||
+            		(stackData!=null && stackData.mMaterial.mMaterial == Materials.Glyceryl  && aStack.stackSize >= 1 ) ||
+                    (aStack.getItem() == ItemList.Block_Powderbarrel.getItem() && aStack.getItemDamage()==ItemList.Block_Powderbarrel.get(1).getItemDamage() && aStack.stackSize >= 16 )
             		) ) {
                 if ((!aPlayer.capabilities.isCreativeMode) && (aStack.stackSize != 111)) {
                 	if(aStack.getItem() == Item.getItemFromBlock(Blocks.tnt)){
@@ -59,6 +66,8 @@ public class GT_MetaTileEntity_SeismicProspector extends GT_MetaTileEntity_Basic
                     aStack.stackSize -= 2;
                     }else if(aStack.getItem() == Ic2Items.dynamite.getItem()){
                     aStack.stackSize -= 8;
+                    }else if(aStack.getItem() == ItemList.Block_Powderbarrel.getItem() && aStack.getItemDamage()==ItemList.Block_Powderbarrel.get(1).getItemDamage()){
+                    aStack.stackSize -=16;
                     }else{
                     aStack.stackSize -= 1;
                     }
@@ -69,9 +78,15 @@ public class GT_MetaTileEntity_SeismicProspector extends GT_MetaTileEntity_Basic
                 this.ready = false;
                 GT_Utility.ItemNBT.setBookTitle(aPlayer.getCurrentEquippedItem(), "Raw Prospection Data");
                 List<String> tStringList = new ArrayList<String>();
+
+                //range by tier
+                int min=-range();
+                int max=range();
+                int step=step();
+
                 for (int i = this.getBaseMetaTileEntity().getYCoord(); i > 0; i--) {
-                    for (int f = -2; f < 3; f++) {
-                        for (int g = -2; g < 3; g++) {
+                    for (int f = min; f <= max; f+=step) {
+                        for (int g = min; g <= max; g+=step) {
                             Block tBlock = this.getBaseMetaTileEntity().getBlockOffset(f, -i, g);
                             if ((tBlock instanceof GT_Block_Ores_Abstract)) {
                                 TileEntity tTileEntity = getBaseMetaTileEntity().getWorld().getTileEntity(getBaseMetaTileEntity().getXCoord() + f, getBaseMetaTileEntity().getYCoord() + (-i), getBaseMetaTileEntity().getZCoord() + g);
@@ -98,7 +113,7 @@ public class GT_MetaTileEntity_SeismicProspector extends GT_MetaTileEntity_Basic
                     }
                 }
                 if(tStringList.size()<1){tStringList.add("No Ores found.");}
-                FluidStack tFluid = GT_Utility.undergroundOil(getBaseMetaTileEntity().getWorld(), getBaseMetaTileEntity().getXCoord()>>4, getBaseMetaTileEntity().getZCoord()>>4,false,0);
+                FluidStack tFluid = GT_UndergroundOil.undergroundOilReadInformation(getBaseMetaTileEntity());
                 String[] tStringArray = new String[tStringList.size()];
                 {
                     for (int i = 0; i < tStringArray.length; i++) {
@@ -112,4 +127,21 @@ public class GT_MetaTileEntity_SeismicProspector extends GT_MetaTileEntity_Basic
         return true;
     }
 
+    private int range() {
+        switch (mTier) {
+            case 1: return 16;
+            case 2: return 32;
+            case 3: return 48;
+        }
+        return 0;
+    }
+
+    private int step(){
+        switch (mTier){
+            case 1: return 1;
+            case 2: return 3;
+            case 3: return 4;
+        }
+        return 1;
+    }
 }

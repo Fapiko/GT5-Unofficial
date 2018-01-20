@@ -24,26 +24,32 @@ public class GT_Cover_FluidRegulator extends GT_CoverBehavior {
 		if ((aTileEntity instanceof IFluidHandler)) {
 			IFluidHandler tTank1;
 			IFluidHandler tTank2;
+            ForgeDirection directionFrom;
+            ForgeDirection directionTo;
 			if (aCoverVariable > 0) {
 				tTank2 = aTileEntity.getITankContainerAtSide(aSide);
 				tTank1 = (IFluidHandler) aTileEntity;
+                directionFrom = ForgeDirection.UNKNOWN;
+                directionTo = ForgeDirection.getOrientation(aSide).getOpposite();
 			} else {
 				tTank1 = aTileEntity.getITankContainerAtSide(aSide);
 				tTank2 = (IFluidHandler) aTileEntity;
+                directionFrom = ForgeDirection.getOrientation(aSide).getOpposite();
+                directionTo = ForgeDirection.UNKNOWN;
 			}
 			if (tTank1 != null && tTank2 != null) {
-				FluidStack tLiquid = tTank1.drain(ForgeDirection.UNKNOWN, Math.abs(aCoverVariable), false);
+				FluidStack tLiquid = tTank1.drain(directionFrom, Math.abs(aCoverVariable), false);
 				if (tLiquid != null) {
 					tLiquid = tLiquid.copy();
-					tLiquid.amount = tTank2.fill(ForgeDirection.getOrientation(aSide).getOpposite(), tLiquid, false);
+					tLiquid.amount = tTank2.fill(directionTo, tLiquid, false);
 					if (tLiquid.amount > 0) {
 						if (aTileEntity.getUniversalEnergyCapacity() >= Math.min(1, tLiquid.amount / 10)) {
 							if (aTileEntity.isUniversalEnergyStored(Math.min(1, tLiquid.amount / 10))) {
 								aTileEntity.decreaseStoredEnergyUnits(Math.min(1, tLiquid.amount / 10), true);
-								tTank2.fill(ForgeDirection.getOrientation(aSide).getOpposite(),	tTank1.drain(ForgeDirection.UNKNOWN, tLiquid.amount, true), true);
+								tTank2.fill(directionTo, tTank1.drain(directionFrom, tLiquid.amount, true), true);
 							}
 						} else {
-							tTank2.fill(ForgeDirection.getOrientation(aSide).getOpposite(), tTank1.drain(ForgeDirection.UNKNOWN, tLiquid.amount, true), true);
+							tTank2.fill(directionTo, tTank1.drain(directionFrom, tLiquid.amount, true), true);
 						}
 					}
 				}
@@ -55,9 +61,9 @@ public class GT_Cover_FluidRegulator extends GT_CoverBehavior {
 	public int onCoverScrewdriverclick(byte aSide, int aCoverID, int aCoverVariable, ICoverable aTileEntity,
 			EntityPlayer aPlayer, float aX, float aY, float aZ) {
 		if (GT_Utility.getClickedFacingCoords(aSide, aX, aY, aZ)[0] >= 0.5F) {
-			aCoverVariable += 16;
+			aCoverVariable += aPlayer.isSneaking() ? 256 : 16;
 		} else {
-			aCoverVariable -= 16;
+			aCoverVariable -= aPlayer.isSneaking() ? 256 : 16;
 		}
 		if (aCoverVariable > mTransferRate) {
 			aCoverVariable = mTransferRate;
@@ -66,7 +72,7 @@ public class GT_Cover_FluidRegulator extends GT_CoverBehavior {
 			aCoverVariable = (0 - mTransferRate);
 		}
 		GT_Utility.sendChatToPlayer(aPlayer,
-				"Pump speed: " + aCoverVariable + "L/tick " + aCoverVariable * 20 + "L/sec");
+				trans("048", "Pump speed: ") + aCoverVariable + trans("049", "L/tick ") + aCoverVariable * 20 + trans("050", "L/sec"));
 		return aCoverVariable;
 	}
 
@@ -84,48 +90,48 @@ public class GT_Cover_FluidRegulator extends GT_CoverBehavior {
 			aCoverVariable = (0 - mTransferRate);
 		}
 		GT_Utility.sendChatToPlayer(aPlayer,
-				"Pump speed: " + aCoverVariable + "L/tick " + aCoverVariable * 20 + "L/sec");
+				trans("048", "Pump speed: ") + aCoverVariable + trans("049", "L/tick ") + aCoverVariable * 20 + trans("050", "L/sec"));
 		aTileEntity.setCoverDataAtSide(aSide, aCoverVariable);
 		return true;
 	}
 
-	public boolean letsRedstoneGoIn(byte aSide, int aCoverID, int aCoverVariable, ICoverable aTileEntity) {
-		return true;
-	}
+    public boolean letsRedstoneGoIn(byte aSide, int aCoverID, int aCoverVariable, ICoverable aTileEntity) {
+        return true;
+    }
 
-	public boolean letsRedstoneGoOut(byte aSide, int aCoverID, int aCoverVariable, ICoverable aTileEntity) {
-		return true;
-	}
+    public boolean letsRedstoneGoOut(byte aSide, int aCoverID, int aCoverVariable, ICoverable aTileEntity) {
+        return true;
+    }
 
-	public boolean letsEnergyIn(byte aSide, int aCoverID, int aCoverVariable, ICoverable aTileEntity) {
-		return true;
-	}
+    public boolean letsEnergyIn(byte aSide, int aCoverID, int aCoverVariable, ICoverable aTileEntity) {
+        return true;
+    }
 
-	public boolean letsEnergyOut(byte aSide, int aCoverID, int aCoverVariable, ICoverable aTileEntity) {
-		return true;
-	}
+    public boolean letsEnergyOut(byte aSide, int aCoverID, int aCoverVariable, ICoverable aTileEntity) {
+        return true;
+    }
 
-	public boolean letsItemsIn(byte aSide, int aCoverID, int aCoverVariable, int aSlot, ICoverable aTileEntity) {
-		return true;
-	}
+    public boolean letsItemsIn(byte aSide, int aCoverID, int aCoverVariable, int aSlot, ICoverable aTileEntity) {
+        return true;
+    }
 
-	public boolean letsItemsOut(byte aSide, int aCoverID, int aCoverVariable, int aSlot, ICoverable aTileEntity) {
-		return true;
-	}
+    public boolean letsItemsOut(byte aSide, int aCoverID, int aCoverVariable, int aSlot, ICoverable aTileEntity) {
+        return true;
+    }
 
-	public boolean letsFluidIn(byte aSide, int aCoverID, int aCoverVariable, Fluid aFluid, ICoverable aTileEntity) {
-		return false;
-	}
+    public boolean letsFluidIn(byte aSide, int aCoverID, int aCoverVariable, Fluid aFluid, ICoverable aTileEntity) {
+    	return false;
+    }
 
-	public boolean letsFluidOut(byte aSide, int aCoverID, int aCoverVariable, Fluid aFluid, ICoverable aTileEntity) {
-		return false;
-	}
+    public boolean letsFluidOut(byte aSide, int aCoverID, int aCoverVariable, Fluid aFluid, ICoverable aTileEntity) {
+    	return false;
+    }
 
-	public boolean alwaysLookConnected(byte aSide, int aCoverID, int aCoverVariable, ICoverable aTileEntity) {
-		return true;
-	}
+    public boolean alwaysLookConnected(byte aSide, int aCoverID, int aCoverVariable, ICoverable aTileEntity) {
+        return true;
+    }
 
-	public int getTickRate(byte aSide, int aCoverID, int aCoverVariable, ICoverable aTileEntity) {
-		return 1;
-	}
+    public int getTickRate(byte aSide, int aCoverID, int aCoverVariable, ICoverable aTileEntity) {
+        return 1;
+    }
 }

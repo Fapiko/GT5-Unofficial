@@ -10,6 +10,7 @@ import codechicken.nei.recipe.GuiRecipe;
 import codechicken.nei.recipe.GuiUsageRecipe;
 import codechicken.nei.recipe.TemplateRecipeHandler;
 import cpw.mods.fml.common.event.FMLInterModComms;
+import gregtech.GT_Mod;
 import gregtech.api.enums.GT_Values;
 import gregtech.api.enums.OrePrefixes;
 import gregtech.api.gui.GT_GUIContainer_BasicMachine;
@@ -17,6 +18,7 @@ import gregtech.api.objects.ItemData;
 import gregtech.api.util.GT_LanguageManager;
 import gregtech.api.util.GT_OreDictUnificator;
 import gregtech.api.util.GT_Recipe;
+import gregtech.api.util.GT_Recipe.GT_Recipe_WithAlt;
 import gregtech.api.util.GT_Utility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -30,6 +32,8 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import static gregtech.api.util.GT_Utility.trans;
 
 public class GT_NEI_AssLineHandler
         extends TemplateRecipeHandler {
@@ -115,7 +119,6 @@ public class GT_NEI_AssLineHandler
                 }
             }
         }
-        CachedDefaultRecipe tNEIRecipe;
     }
 
     public void loadUsageRecipes(ItemStack aInput) {
@@ -212,22 +215,36 @@ public class GT_NEI_AssLineHandler
     public void drawExtras(int aRecipeIndex) {
         int tEUt = ((CachedDefaultRecipe) this.arecipes.get(aRecipeIndex)).mRecipe.mEUt;
         int tDuration = ((CachedDefaultRecipe) this.arecipes.get(aRecipeIndex)).mRecipe.mDuration;
-        if (tEUt != 0) {
-            drawText(10, 73, "Total: " + tDuration * tEUt + " EU", -16777216);
-            drawText(10, 83, "Usage: " + tEUt + " EU/t", -16777216);
-            if (this.mRecipeMap.mShowVoltageAmperageInNEI) {
-                drawText(10, 93, "Voltage: " + tEUt / this.mRecipeMap.mAmperage + " EU", -16777216);
-                drawText(10, 103, "Amperage: " + this.mRecipeMap.mAmperage, -16777216);
-            } else {
-                drawText(10, 93, "Voltage: unspecified", -16777216);
-                drawText(10, 103, "Amperage: unspecified", -16777216);
+        String[] recipeDesc = ((CachedDefaultRecipe) this.arecipes.get(aRecipeIndex)).mRecipe.getNeiDesc();
+        if (recipeDesc == null) {
+            if (tEUt != 0) {
+                drawText(10, 73, trans("152","Total: ") + ((long)tDuration * tEUt) + " EU", -16777216);
+                drawText(10, 83, trans("153","Usage: ") + tEUt + " EU/t", -16777216);
+                if (this.mRecipeMap.mShowVoltageAmperageInNEI) {
+                    drawText(10, 93, trans("154","Voltage: ") + tEUt / this.mRecipeMap.mAmperage + " EU", -16777216);
+                    drawText(10, 103, trans("155","Amperage: ") + this.mRecipeMap.mAmperage, -16777216);
+                } else {
+                    drawText(10, 93, trans("156","Voltage: unspecified"), -16777216);
+                    drawText(10, 103, trans("157","Amperage: unspecified"), -16777216);
+                }
             }
-        }
-        if (tDuration > 0) {
-            drawText(10, 113, "Time: " + (tDuration < 20 ? "< 1" : Integer.valueOf(tDuration / 20)) + " secs", -16777216);
-        }
-        if ((GT_Utility.isStringValid(this.mRecipeMap.mNEISpecialValuePre)) || (GT_Utility.isStringValid(this.mRecipeMap.mNEISpecialValuePost))) {
-            drawText(10, 123, this.mRecipeMap.mNEISpecialValuePre + ((CachedDefaultRecipe) this.arecipes.get(aRecipeIndex)).mRecipe.mSpecialValue * this.mRecipeMap.mNEISpecialValueMultiplier + this.mRecipeMap.mNEISpecialValuePost, -16777216);
+            if (tDuration > 0) {
+                drawText(10, 113, trans("158","Time: ")+String.format("%.2f " + trans("161"," secs"), 0.05F * tDuration), -16777216);
+            }
+            int tSpecial = ((CachedDefaultRecipe) this.arecipes.get(aRecipeIndex)).mRecipe.mSpecialValue;
+            if (tSpecial == -100 && GT_Mod.gregtechproxy.mLowGravProcessing) {
+                drawText(10, 123, trans("159","Needs Low Gravity"), -16777216);
+            } else if (tSpecial == -200 && GT_Mod.gregtechproxy.mEnableCleanroom) {
+                drawText(10, 123, trans("160","Needs Cleanroom"), -16777216);
+            } else if ((GT_Utility.isStringValid(this.mRecipeMap.mNEISpecialValuePre)) || (GT_Utility.isStringValid(this.mRecipeMap.mNEISpecialValuePost))) {
+                drawText(10, 123, this.mRecipeMap.mNEISpecialValuePre + tSpecial * this.mRecipeMap.mNEISpecialValueMultiplier + this.mRecipeMap.mNEISpecialValuePost, -16777216);
+            }
+        } else {
+            int i = 0;
+            for (String descLine : recipeDesc) {
+                drawText(10, 73 + 10 * i, descLine, -16777216);
+                i++;
+            }
         }
     }
 
@@ -357,53 +374,11 @@ public class GT_NEI_AssLineHandler
             super();
             this.mRecipe = aRecipe;
 
-            if (aRecipe.getRepresentativeInput(0) != null) {
-                this.mInputs.add(new FixedPositionedStack(aRecipe.getRepresentativeInput(0), 12, 0));
-            }
-            if (aRecipe.getRepresentativeInput(1) != null) {
-                this.mInputs.add(new FixedPositionedStack(aRecipe.getRepresentativeInput(1), 30, 0));
-            }
-            if (aRecipe.getRepresentativeInput(2) != null) {
-                this.mInputs.add(new FixedPositionedStack(aRecipe.getRepresentativeInput(2), 48, 0));
-            }
-            if (aRecipe.getRepresentativeInput(3) != null) {
-                this.mInputs.add(new FixedPositionedStack(aRecipe.getRepresentativeInput(3), 66, 0));
-            }
-            if (aRecipe.getRepresentativeInput(4) != null) {
-                this.mInputs.add(new FixedPositionedStack(aRecipe.getRepresentativeInput(4), 12, 18));
-            }
-            if (aRecipe.getRepresentativeInput(5) != null) {
-                this.mInputs.add(new FixedPositionedStack(aRecipe.getRepresentativeInput(5), 30, 18));
-            }
-            if (aRecipe.getRepresentativeInput(6) != null) {
-                this.mInputs.add(new FixedPositionedStack(aRecipe.getRepresentativeInput(6), 48, 18));
-            }
-            if (aRecipe.getRepresentativeInput(7) != null) {
-                this.mInputs.add(new FixedPositionedStack(aRecipe.getRepresentativeInput(7), 66, 18));
-            }
-            if (aRecipe.getRepresentativeInput(8) != null) {
-                this.mInputs.add(new FixedPositionedStack(aRecipe.getRepresentativeInput(8), 12,36));
-            }
-            if (aRecipe.getRepresentativeInput(9) != null) {
-                this.mInputs.add(new FixedPositionedStack(aRecipe.getRepresentativeInput(9), 30,36));
-            }
-            if (aRecipe.getRepresentativeInput(10) != null) {
-                this.mInputs.add(new FixedPositionedStack(aRecipe.getRepresentativeInput(10),48, 36));
-            }
-            if (aRecipe.getRepresentativeInput(11) != null) {
-                this.mInputs.add(new FixedPositionedStack(aRecipe.getRepresentativeInput(11),66, 36));
-            }
-            if (aRecipe.getRepresentativeInput(12) != null) {
-                this.mInputs.add(new FixedPositionedStack(aRecipe.getRepresentativeInput(12), 12, 54));
-            }
-            if (aRecipe.getRepresentativeInput(13) != null) {
-                this.mInputs.add(new FixedPositionedStack(aRecipe.getRepresentativeInput(13), 30, 54));
-            }
-            if (aRecipe.getRepresentativeInput(14) != null) {
-                this.mInputs.add(new FixedPositionedStack(aRecipe.getRepresentativeInput(14), 48, 54));
-            }
-            if (aRecipe.getRepresentativeInput(15) != null) {
-                this.mInputs.add(new FixedPositionedStack(aRecipe.getRepresentativeInput(15), 66, 54));
+            for (int i = 0; i < 16; i++) {
+            	Object obj = aRecipe instanceof GT_Recipe_WithAlt ? ((GT_Recipe_WithAlt) aRecipe).getAltRepresentativeInput(i) : aRecipe.getRepresentativeInput(i);
+            	if (obj != null) {
+            		this.mInputs.add(new FixedPositionedStack(obj, 18 * (i % 4) + 12, 18 * (i / 4)));
+            	}
             }
 
             if (aRecipe.mSpecialItems != null) {

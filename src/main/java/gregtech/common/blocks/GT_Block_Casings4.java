@@ -23,20 +23,22 @@ public class GT_Block_Casings4
         for (byte i = 0; i < 16; i = (byte) (i + 1)) {
             Textures.BlockIcons.CASING_BLOCKS[(i + 48)] = new GT_CopiedBlockTexture(this, 6, i);
         }
-        GT_LanguageManager.addStringLocalization(getUnlocalizedName() + ".0.name", "Robust Tungstensteel Casing");
-        GT_LanguageManager.addStringLocalization(getUnlocalizedName() + ".1.name", "Clean Stainless Steel Casing");
-        GT_LanguageManager.addStringLocalization(getUnlocalizedName() + ".2.name", "Stable Titanium Casing");
+        GT_LanguageManager.addStringLocalization(getUnlocalizedName() + ".0.name", "Robust Tungstensteel Machine Casing");
+        GT_LanguageManager.addStringLocalization(getUnlocalizedName() + ".1.name", "Clean Stainless Steel Machine Casing");
+        GT_LanguageManager.addStringLocalization(getUnlocalizedName() + ".2.name", "Stable Titanium Machine Casing");
         GT_LanguageManager.addStringLocalization(getUnlocalizedName() + ".3.name", "Titanium Firebox Casing");
-//    GT_LanguageManager.addStringLocalization(getUnlocalizedName() + ".4.name", "Fusion Casing");
-//    GT_LanguageManager.addStringLocalization(getUnlocalizedName() + ".5.name", "Fusion Casing");
-        GT_LanguageManager.addStringLocalization(getUnlocalizedName() + ".6.name", "Fusion Casing");
-        GT_LanguageManager.addStringLocalization(getUnlocalizedName() + ".7.name", "Fusion Coil");
-        GT_LanguageManager.addStringLocalization(getUnlocalizedName() + ".8.name", "Fusion Casing MK II");
+//      GT_LanguageManager.addStringLocalization(getUnlocalizedName() + ".4.name", "Fusion Casing");
+//      GT_LanguageManager.addStringLocalization(getUnlocalizedName() + ".5.name", "Fusion Casing");
+        GT_LanguageManager.addStringLocalization(getUnlocalizedName() + ".6.name", "Fusion Machine Casing");
+        GT_LanguageManager.addStringLocalization(getUnlocalizedName() + ".7.name", "Fusion Coil Block");
+        GT_LanguageManager.addStringLocalization(getUnlocalizedName() + ".8.name", "Fusion Machine Casing MK II");
         GT_LanguageManager.addStringLocalization(getUnlocalizedName() + ".9.name", "Turbine Casing");
         GT_LanguageManager.addStringLocalization(getUnlocalizedName() + ".10.name", "Stainless Steel Turbine Casing");
         GT_LanguageManager.addStringLocalization(getUnlocalizedName() + ".11.name", "Titanium Turbine Casing");
         GT_LanguageManager.addStringLocalization(getUnlocalizedName() + ".12.name", "Tungstensteel Turbine Casing");
         GT_LanguageManager.addStringLocalization(getUnlocalizedName() + ".13.name", "Engine Intake Casing");
+        GT_LanguageManager.addStringLocalization(getUnlocalizedName() + ".14.name", "Mining Osmiridium Casing");
+        GT_LanguageManager.addStringLocalization(getUnlocalizedName() + ".15.name", "Firebricks");
 
         ItemList.Casing_RobustTungstenSteel.set(new ItemStack(this, 1, 0));
         ItemList.Casing_CleanStainlessSteel.set(new ItemStack(this, 1, 1));
@@ -50,6 +52,8 @@ public class GT_Block_Casings4
         ItemList.Casing_Turbine2.set(new ItemStack(this, 1, 11));
         ItemList.Casing_Turbine3.set(new ItemStack(this, 1, 12));
         ItemList.Casing_EngineIntake.set(new ItemStack(this, 1, 13));
+        ItemList.Casing_MiningOsmiridium.set(new ItemStack(this, 1, 14));
+        ItemList.Casing_Firebricks.set(new ItemStack(this, 1, 15));
     }
 
     public IIcon getIcon(int aSide, int aMeta) {
@@ -63,8 +67,10 @@ public class GT_Block_Casings4
             case 3:
                 return aSide > 1 ? Textures.BlockIcons.MACHINE_CASING_FIREBOX_TITANIUM.getIcon() : Textures.BlockIcons.MACHINE_CASING_STABLE_TITANIUM.getIcon();
             case 4:
+            	//Do not overwrite!
                 return Textures.BlockIcons.MACHINE_CASING_FUSION_GLASS_YELLOW.getIcon();
             case 5:
+            	//Do not overwrite!
                 return Textures.BlockIcons.MACHINE_CASING_FUSION_GLASS.getIcon();
             case 6:
                 return Textures.BlockIcons.MACHINE_CASING_FUSION.getIcon();
@@ -83,9 +89,9 @@ public class GT_Block_Casings4
             case 13:
                 return Textures.BlockIcons.MACHINE_CASING_ENGINE_INTAKE.getIcon();
             case 14:
-                return Textures.BlockIcons.MACHINE_CASING_ROBUST_TUNGSTENSTEEL.getIcon();
+                return Textures.BlockIcons.MACHINE_CASING_MINING_OSMIRIDIUM.getIcon();
             case 15:
-                return Textures.BlockIcons.MACHINE_CASING_ROBUST_TUNGSTENSTEEL.getIcon();
+                return Textures.BlockIcons.MACHINE_CASING_DENSEBRICKS.getIcon();
         }
         return Textures.BlockIcons.MACHINE_CASING_SOLID_STEEL.getIcon();
     }

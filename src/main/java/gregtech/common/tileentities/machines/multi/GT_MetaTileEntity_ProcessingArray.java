@@ -1,5 +1,6 @@
 package gregtech.common.tileentities.machines.multi;
 
+import gregtech.GT_Mod;
 import gregtech.api.GregTech_API;
 import gregtech.api.enums.GT_Values;
 import gregtech.api.enums.Textures;
@@ -23,6 +24,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import static gregtech.api.enums.GT_Values.VN;
+import static gregtech.api.metatileentity.implementations.GT_MetaTileEntity_BasicMachine.isValidForLowGravity;
 
 public class GT_MetaTileEntity_ProcessingArray extends GT_MetaTileEntity_MultiBlockBase {
 
@@ -51,8 +55,8 @@ public class GT_MetaTileEntity_ProcessingArray extends GT_MetaTileEntity_MultiBl
                 "1x Output Hatch/Bus (Any casing)",
                 "1x Maintenance Hatch (Any casing)",
                 "1x Energy Hatch (Any casing)",
-                "Robust Tungstensteel Casings for the rest (14 at least!)",
-                "Place up to 64 Single Block GT Machines into the GUI Inventory",
+                "Robust Tungstensteel Machine Casings for the rest (14 at least!)",
+                "Place up to 64 Single Block GT Machines into the Controller Inventory",
                 "Maximal overclockedness of machines inside: Tier 9"};
     }
 
@@ -92,7 +96,7 @@ public class GT_MetaTileEntity_ProcessingArray extends GT_MetaTileEntity_MultiBl
 
     public GT_Recipe.GT_Recipe_Map getRecipeMap() {
         if (mInventory[1] == null) return null;
-        String tmp = mInventory[1].getUnlocalizedName().replaceAll("gt.blockmachines.basicmachine.", "");
+        String tmp = mInventory[1].getUnlocalizedName().replaceAll("gt\\.blockmachines\\.basicmachine\\.", "");
         if (tmp.startsWith("centrifuge")) {
             return GT_Recipe.GT_Recipe_Map.sCentrifugeRecipes;
         } else if (tmp.startsWith("electrolyzer")) {
@@ -157,22 +161,24 @@ public class GT_MetaTileEntity_ProcessingArray extends GT_MetaTileEntity_MultiBl
             return GT_Recipe.GT_Recipe_Map.sUnboxinatorRecipes;
         } else if (tmp.startsWith("polarizer")) {
             return GT_Recipe.GT_Recipe_Map.sPolarizerRecipes;
+        } else if(tmp.startsWith("press")){
+            return GT_Recipe.GT_Recipe_Map.sPressRecipes;
         } else if (tmp.startsWith("plasmaarcfurnace")) {
-             return GT_Recipe.GT_Recipe_Map.sPlasmaArcFurnaceRecipes;
+            return GT_Recipe.GT_Recipe_Map.sPlasmaArcFurnaceRecipes;
         } else if (tmp.startsWith("printer")) {
-             return GT_Recipe.GT_Recipe_Map.sPrinterRecipes;
-        } else if (tmp.startsWith("press")) {
-              return GT_Recipe.GT_Recipe_Map.sPressRecipes;
+            return GT_Recipe.GT_Recipe_Map.sPrinterRecipes;
         } else if (tmp.startsWith("fluidcanner")) {
-              return GT_Recipe.GT_Recipe_Map.sFluidCannerRecipes;
+            return GT_Recipe.GT_Recipe_Map.sFluidCannerRecipes;
         } else if (tmp.startsWith("fluidheater")) {
-              return GT_Recipe.GT_Recipe_Map.sFluidHeaterRecipes;
+            return GT_Recipe.GT_Recipe_Map.sFluidHeaterRecipes;
         } else if (tmp.startsWith("distillery")) {
-              return GT_Recipe.GT_Recipe_Map.sDistilleryRecipes;
+            return GT_Recipe.GT_Recipe_Map.sDistilleryRecipes;
         } else if (tmp.startsWith("slicer")) {
-              return GT_Recipe.GT_Recipe_Map.sSlicerRecipes;
+            return GT_Recipe.GT_Recipe_Map.sSlicerRecipes;
         } else if (tmp.startsWith("amplifier")) {
-              return GT_Recipe.GT_Recipe_Map.sAmplifiers;
+            return GT_Recipe.GT_Recipe_Map.sAmplifiers;
+        } else if (tmp.startsWith("circuitassembler")) {
+            return GT_Recipe.GT_Recipe_Map.sCircuitAssemblerRecipes;
         }
 
         return null;
@@ -195,70 +201,72 @@ public class GT_MetaTileEntity_ProcessingArray extends GT_MetaTileEntity_MultiBl
             return false;
         }
         GT_Recipe.GT_Recipe_Map map = getRecipeMap();
-        if (map == null) {
-            return false;
-        }
+        if (map == null) return false;
         ArrayList<ItemStack> tInputList = getStoredInputs();
 
-        if       (mInventory[1].getUnlocalizedName().endsWith("10")) {
+        if (mInventory[1].getUnlocalizedName().endsWith("10")) {
             tTier = 9;
-            mMult=2;//u need 4x less machines and they will use 4x less power
-        }else if (mInventory[1].getUnlocalizedName().endsWith("11")) {
+            mMult = 2;//u need 4x less machines and they will use 4x less power
+        } else if (mInventory[1].getUnlocalizedName().endsWith("11")) {
             tTier = 9;
-            mMult=4;//u need 16x less machines and they will use 16x less power
-        }else if (mInventory[1].getUnlocalizedName().endsWith("12") ||
-                  mInventory[1].getUnlocalizedName().endsWith("13") ||
-                  mInventory[1].getUnlocalizedName().endsWith("14") ||
-                  mInventory[1].getUnlocalizedName().endsWith("15")) {
+            mMult = 4;//u need 16x less machines and they will use 16x less power
+        } else if (mInventory[1].getUnlocalizedName().endsWith("12") ||
+                mInventory[1].getUnlocalizedName().endsWith("13") ||
+                mInventory[1].getUnlocalizedName().endsWith("14") ||
+                mInventory[1].getUnlocalizedName().endsWith("15")) {
             tTier = 9;
-            mMult=6;//u need 64x less machines and they will use 64x less power
-        }else if (mInventory[1].getUnlocalizedName().endsWith("1")) {
+            mMult = 6;//u need 64x less machines and they will use 64x less power
+        } else if (mInventory[1].getUnlocalizedName().endsWith("1")) {
             tTier = 1;
-            mMult=0;//*1
-        }else if (mInventory[1].getUnlocalizedName().endsWith("2")) {
+            mMult = 0;//*1
+        } else if (mInventory[1].getUnlocalizedName().endsWith("2")) {
             tTier = 2;
-            mMult=0;//*1
-        }else if (mInventory[1].getUnlocalizedName().endsWith("3")) {
+            mMult = 0;//*1
+        } else if (mInventory[1].getUnlocalizedName().endsWith("3")) {
             tTier = 3;
-            mMult=0;//*1
-        }else if (mInventory[1].getUnlocalizedName().endsWith("4")) {
+            mMult = 0;//*1
+        } else if (mInventory[1].getUnlocalizedName().endsWith("4")) {
             tTier = 4;
-            mMult=0;//*1
-        }else if (mInventory[1].getUnlocalizedName().endsWith("5")) {
+            mMult = 0;//*1
+        } else if (mInventory[1].getUnlocalizedName().endsWith("5")) {
             tTier = 5;
-            mMult=0;//*1
-        }else if (mInventory[1].getUnlocalizedName().endsWith("6")) {
+            mMult = 0;//*1
+        } else if (mInventory[1].getUnlocalizedName().endsWith("6")) {
             tTier = 6;
-            mMult=0;//*1
-        }else if (mInventory[1].getUnlocalizedName().endsWith("7")) {
+            mMult = 0;//*1
+        } else if (mInventory[1].getUnlocalizedName().endsWith("7")) {
             tTier = 7;
-            mMult=0;//*1
-        }else if (mInventory[1].getUnlocalizedName().endsWith("8")) {
+            mMult = 0;//*1
+        } else if (mInventory[1].getUnlocalizedName().endsWith("8")) {
             tTier = 8;
-            mMult=0;//*1
-        }else if (mInventory[1].getUnlocalizedName().endsWith("9")) {
+            mMult = 0;//*1
+        } else if (mInventory[1].getUnlocalizedName().endsWith("9")) {
             tTier = 9;
-            mMult=0;//*1
-        }else{
+            mMult = 0;//*1
+        } else {
             tTier = 0;
-            mMult=0;//*1
+            mMult = 0;//*1
         }
-        
-        if(!mMachine.equals(mInventory[1].getUnlocalizedName()))mLastRecipe=null;
+
+        if (!mMachine.equals(mInventory[1].getUnlocalizedName())) mLastRecipe = null;
         mMachine = mInventory[1].getUnlocalizedName();
         ItemStack[] tInputs = (ItemStack[]) tInputList.toArray(new ItemStack[tInputList.size()]);
 
         ArrayList<FluidStack> tFluidList = getStoredFluids();
-        
-        FluidStack[] tFluids = (FluidStack[]) tFluidList.toArray(new FluidStack[tFluidList.size()]); 
+
+        FluidStack[] tFluids = (FluidStack[]) tFluidList.toArray(new FluidStack[tFluidList.size()]);
         if (tInputList.size() > 0 || tFluids.length > 0) {
             GT_Recipe tRecipe = map.findRecipe(getBaseMetaTileEntity(), mLastRecipe, false, gregtech.api.enums.GT_Values.V[tTier], tFluids, tInputs);
             if (tRecipe != null) {
+                if (GT_Mod.gregtechproxy.mLowGravProcessing && tRecipe.mSpecialValue == -100 &&
+                        !isValidForLowGravity(tRecipe, getBaseMetaTileEntity().getWorld().provider.dimensionId))
+                    return false;
+
                 mLastRecipe = tRecipe;
                 this.mEUt = 0;
                 this.mOutputItems = null;
                 this.mOutputFluids = null;
-                int machines = Math.min(64, mInventory[1].stackSize<<mMult); //Upped max Cap to 64
+                int machines = Math.min(64, mInventory[1].stackSize << mMult); //Upped max Cap to 64
                 int i = 0;
                 for (; i < machines; i++) {
                     if (!tRecipe.isRecipeInputEqual(true, tFluids, tInputs)) {
@@ -271,11 +279,11 @@ public class GT_MetaTileEntity_ProcessingArray extends GT_MetaTileEntity_MultiBl
                 this.mMaxProgresstime = tRecipe.mDuration;
                 this.mEfficiency = (10000 - (getIdealStatus() - getRepairStatus()) * 1000);
                 this.mEfficiencyIncrease = 10000;
-                calculateOverclockedNessMulti(tRecipe.mEUt, tRecipe.mDuration, 1, GT_Values.V[tTier]);
+                calculateOverclockedNessMulti(tRecipe.mEUt, tRecipe.mDuration, map.mAmperage, GT_Values.V[tTier]);
                 //In case recipe is too OP for that machine
                 if (mMaxProgresstime == Integer.MAX_VALUE - 1 && mEUt == Integer.MAX_VALUE - 1)
                     return false;
-                this.mEUt = GT_Utility.safeInt(((long)this.mEUt*i)>>mMult,1);
+                this.mEUt = GT_Utility.safeInt(((long) this.mEUt * i) >> mMult, 1);
                 if (mEUt == Integer.MAX_VALUE - 1)
                     return false;
 
@@ -284,7 +292,7 @@ public class GT_MetaTileEntity_ProcessingArray extends GT_MetaTileEntity_MultiBl
                 }
                 ItemStack[] tOut = new ItemStack[tRecipe.mOutputs.length];
                 for (int h = 0; h < tRecipe.mOutputs.length; h++) {
-                    if(tRecipe.getOutput(h)!=null){
+                    if (tRecipe.getOutput(h) != null) {
                         tOut[h] = tRecipe.getOutput(h).copy();
                         tOut[h].stackSize = 0;
                     }
@@ -303,13 +311,12 @@ public class GT_MetaTileEntity_ProcessingArray extends GT_MetaTileEntity_MultiBl
                     int tSize = tFOut.amount;
                     tFOut.amount = tSize * i;
                 }
-
-                tOut= clean(tOut);
+                tOut = clean(tOut);
                 this.mMaxProgresstime = Math.max(1, this.mMaxProgresstime);
                 List<ItemStack> overStacks = new ArrayList<ItemStack>();
                 for (int f = 0; f < tOut.length; f++) {
                     while (tOut[f].getMaxStackSize() < tOut[f].stackSize) {
-                        if(tOut[f]!=null) {
+                        if (tOut[f] != null) {
                             ItemStack tmp = tOut[f].copy();
                             tmp.stackSize = tmp.getMaxStackSize();
                             tOut[f].stackSize = tOut[f].stackSize - tOut[f].getMaxStackSize();
@@ -337,8 +344,8 @@ public class GT_MetaTileEntity_ProcessingArray extends GT_MetaTileEntity_MultiBl
         }
         return false;
     }
-
-    public static ItemStack[] clean(final ItemStack[] v){
+    
+    public static ItemStack[] clean(final ItemStack[] v) {
         List<ItemStack> list = new ArrayList<ItemStack>(Arrays.asList(v));
         list.removeAll(Collections.singleton(null));
         return list.toArray(new ItemStack[list.size()]);
@@ -384,10 +391,6 @@ public class GT_MetaTileEntity_ProcessingArray extends GT_MetaTileEntity_MultiBl
         return 0;
     }
 
-    public int getAmountOfOutputs() {
-        return 1;
-    }
-
     public boolean explodesOnComponentBreak(ItemStack aStack) {
         return false;
     }
@@ -413,8 +416,9 @@ public class GT_MetaTileEntity_ProcessingArray extends GT_MetaTileEntity_MultiBl
                         EnumChatFormatting.YELLOW + Long.toString(maxEnergy) + EnumChatFormatting.RESET +" EU",
                 "Probably uses: "+
                         EnumChatFormatting.RED + Integer.toString(-mEUt) + EnumChatFormatting.RESET + " EU/t",
-                "Maximum total power (to all Energy Hatches, not single ones): ",
-                EnumChatFormatting.YELLOW+Long.toString(getMaxInputVoltage())+EnumChatFormatting.RESET+ " EU/t * 2A",
+                "Max Energy Income: "+
+                        EnumChatFormatting.YELLOW+Long.toString(getMaxInputVoltage())+EnumChatFormatting.RESET+ " EU/t(*2A) Tier: "+
+                        EnumChatFormatting.YELLOW+VN[GT_Utility.getTier(getMaxInputVoltage())]+ EnumChatFormatting.RESET,
                 "Problems: "+
                         EnumChatFormatting.RED+ (getIdealStatus() - getRepairStatus())+EnumChatFormatting.RESET+
                         " Efficiency: "+

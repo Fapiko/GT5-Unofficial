@@ -29,6 +29,11 @@ public class GT_Block_Ores_UB3 extends GT_Block_Ores_Abstract {
     }
 
     @Override
+    public int getBaseBlockHarvestLevel(int aMeta) {
+        return aUBBlock.getHarvestLevel(aMeta);
+    }
+
+    @Override
     public Block getDroppedBlock() {
         return GregTech_API.sBlockOresUb3;
     }
@@ -36,6 +41,11 @@ public class GT_Block_Ores_UB3 extends GT_Block_Ores_Abstract {
     @Override
     public Materials[] getDroppedDusts() { //Must have 8 entries; can be null.
         return new Materials[]{Materials.Stone, Materials.Stone, Materials.Stone, Materials.Stone, Materials.Stone, Materials.Stone, Materials.Stone, Materials.Stone};
+    }
+
+    @Override
+    public boolean[] getEnabledMetas() {
+        return new boolean[]{true, true, true, true, true, true, true, true};
     }
 
     @Override
